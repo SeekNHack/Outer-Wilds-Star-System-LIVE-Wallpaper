@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#030405">
+  <title>Outer Wilds — Sistema solare</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./solar.css">
+</head>
+<body>
+  <main class="wallpaper" aria-label="Sistema solare animato di Outer Wilds">
+    <div class="stars stars--far" aria-hidden="true"></div>
+    <div class="stars stars--near" aria-hidden="true"></div>
+
+    <header class="clock" aria-label="Ora corrente">
+      <time id="time" class="clock__time">--:--</time>
+    </header>
+
+    <div class="solar-system" aria-hidden="true">
+      <div class="sun-glow"></div>
+      <img class="sun" src="./assets/Sun.png" alt="" draggable="false">
+      <div class="stranger-wrap">
+        <div class="stranger-motion">
+          <div class="stranger-shadow"></div>
+          <img class="stranger" src="./assets/Stranger.png" alt="" draggable="false">
+        </div>
+      </div>
+      <div class="sun-station-orbit">
+        <img class="sun-station" src="./assets/Sun_Station.png" alt="" draggable="false">
+      </div>
+
+      <div class="orbit orbit--twins">
+        <div class="traveller traveller--twins">
+          <div class="binary-system">
+            <img class="sand-pillar" src="./assets/Sand_Pillar.png" alt="" draggable="false">
+            <img class="planet planet--ember" src="./assets/Ember_Twin.png" alt="" draggable="false">
+            <img class="planet planet--ash" src="./assets/Ash_Twin.png" alt="" draggable="false">
+          </div>
+        </div>
+      </div>
+
+      <div class="orbit orbit--timber">
+        <div class="traveller traveller--timber">
+          <span class="moon-orbit"><img class="moon" src="./assets/Attlerock.png" alt="" draggable="false"></span>
+          <img class="planet planet--timber" src="./assets/Timber_Hearth.png" alt="" draggable="false">
+        </div>
+      </div>
+
+      <div class="orbit orbit--brittle">
+        <div class="traveller traveller--brittle">
+          <img class="planet planet--brittle" src="./assets/Brittle_Hollow.png" alt="" draggable="false">
+          <span class="moon-orbit moon-orbit--brittle"><img class="moon moon--hollow-lantern" src="./assets/Hollows_Lantern.png" alt="" draggable="false"></span>
+        </div>
+      </div>
+
+      <div class="orbit orbit--giants">
+        <div class="traveller traveller--giants">
+          <img class="planet planet--giants" src="./assets/Giant's_Deep.png" alt="" draggable="false">
+          <span class="moon-orbit moon-orbit--giants"><img class="moon moon--orbital-probe" src="./assets/Probe_Cannon.png" alt="" draggable="false"></span>
+          <span id="quantum-orbit" class="quantum-orbit"><span class="quantum-hover-target"><img class="quantum-moon" src="./assets/Quantum_Moon.png" alt="" draggable="false"></span></span>
+        </div>
+      </div>
+
+      <div class="orbit orbit--bramble">
+        <div class="traveller traveller--bramble">
+          <img class="planet planet--bramble" src="./assets/Dark_Bramble.png" alt="" draggable="false">
+        </div>
+      </div>
+
+      <div class="interloper-orbit"></div>
+      <img id="interloper" class="interloper" src="./assets/interloper.png" alt="" draggable="false">
+      <img class="white-hole" src="./assets/White_Hole.png" alt="" draggable="false">
+    </div>
+  </main>
+  <script>
+    const timeElement = document.getElementById('time');
+    const system = document.querySelector('.solar-system');
+    const sun = document.querySelector('.sun');
+    const interloper = document.getElementById('interloper');
+    const interloperOrbit = document.querySelector('.interloper-orbit');
+
+    function updateClock() {
+      const now = new Date();
+      timeElement.textContent = new Intl.DateTimeFormat('it-IT', {
+        hour: '2-digit', minute: '2-digit', hour12: false
+      }).format(now);
+      timeElement.dateTime = now.toISOString();
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    const quantumOrbit = document.getElementById('quantum-orbit');
+    const quantumHosts = [
+      '.traveller--twins', '.traveller--timber', '.traveller--brittle',
+      '.traveller--giants', '.traveller--bramble'
+    ].map(selector => document.querySelector(selector));
+    let currentQuantumHost = 3;
+    let quantumTransitioning = false;
+
+    function moveQuantumMoon() {
+      if (quantumTransitioning) return;
+      quantumTransitioning = true;
+      quantumOrbit.classList.add('quantum-orbit--shifting');
+      setTimeout(() => {
+        // Pick any of the other four planets, never the current one.
+        const nextOffset = 1 + Math.floor(Math.random() * (quantumHosts.length - 1));
+        currentQuantumHost = (currentQuantumHost + nextOffset) % quantumHosts.length;
+        quantumHosts[currentQuantumHost].append(quantumOrbit);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          quantumOrbit.classList.remove('quantum-orbit--shifting');
+          quantumTransitioning = false;
+          syncOrbitAnimations();
+        }));
+      }, 350);
+    }
+
+    const quantumHoverTarget = document.querySelector('.quantum-hover-target');
+    quantumHoverTarget.addEventListener('pointerenter', moveQuantumMoon);
+    // Wallpaper Engine's embedded browser also reports mouseenter reliably
+    // when an animated object moves underneath a stationary cursor.
+    quantumHoverTarget.addEventListener('mouseenter', moveQuantumMoon);
+
+    let orbitSpeed = 1;
+    let quantumShiftTimer = setInterval(moveQuantumMoon, 30000);
+
+    function syncOrbitAnimations() {
+      document.querySelectorAll('.traveller, .binary-system, .moon-orbit, .quantum-orbit, .sun-station-orbit')
+        .forEach(element => element.getAnimations().forEach(animation => {
+          animation.playbackRate = orbitSpeed;
+        }));
+    }
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const strangerOrbits = [[.62, .98], [.72, 1.08], [.84, 1.18]];
+    function chooseStrangerOrbit() {
+      const [radiusX, radiusY] = strangerOrbits[Math.floor(Math.random() * strangerOrbits.length)];
+      const direction = Math.random() * Math.PI * 2;
+      const impact = (Math.random() < .5 ? -1 : 1) * (.015 + Math.random() * .03);
+      system.style.setProperty('--stranger-radius-x-factor', radiusX);
+      system.style.setProperty('--stranger-radius-y-factor', radiusY);
+      system.style.setProperty('--stranger-impact-factor', impact);
+      system.style.setProperty('--stranger-cos', Math.cos(direction));
+      system.style.setProperty('--stranger-sin', Math.sin(direction));
+    }
+    chooseStrangerOrbit();
+    system.addEventListener('animationiteration', event => {
+      if (event.animationName === 'stranger-orbit') chooseStrangerOrbit();
+    });
+
+    // Sample the ellipse by arc length so the comet covers equal distances
+    // in equal time without leaving its orbit.
+    let orbitDuration = 180000;
+    let cometProgress = 0.5;
+    let previousFrameTime = null;
+    const orbitSamples = 720;
+    let cometPath;
+    function measureCometPath() {
+      // Use untransformed local coordinates: the parent scales the path and
+      // the comet together, so its CSS left/top must stay in that same space.
+      const centerX = interloperOrbit.offsetLeft + interloperOrbit.offsetWidth / 2;
+      const centerY = interloperOrbit.offsetTop + interloperOrbit.offsetHeight / 2;
+      const radiusX = interloperOrbit.offsetWidth / 2;
+      const radiusY = interloperOrbit.offsetHeight / 2;
+      const distances = new Float32Array(orbitSamples + 1);
+      let previousX = centerX + radiusX;
+      let previousY = centerY;
+      for (let i = 1; i <= orbitSamples; i++) {
+        const angle = i * Math.PI * 2 / orbitSamples;
+        const x = centerX + radiusX * Math.cos(angle);
+        const y = centerY + radiusY * Math.sin(angle);
+        distances[i] = distances[i - 1] + Math.hypot(x - previousX, y - previousY);
+        previousX = x;
+        previousY = y;
+      }
+      // Start the Interloper at the exact leftmost ellipse point. In this
+      // sampled ellipse, distance 0 is the rightmost point, so half the orbit
+      // length is the leftmost point.
+      cometPath = { centerX, centerY, radiusX, radiusY, distances,
+        length: distances[orbitSamples], initialDistance: distances[orbitSamples] / 2 };
+    }
+    measureCometPath();
+    window.addEventListener('resize', measureCometPath);
+    window.addEventListener('wallpaper-speed-changed', event => {
+      orbitSpeed = event.detail;
+      orbitDuration = 180000 / orbitSpeed;
+      clearInterval(quantumShiftTimer);
+      quantumShiftTimer = setInterval(moveQuantumMoon, 30000 / orbitSpeed);
+      system.getAnimations().forEach(animation => {
+        if (animation.animationName === 'stranger-orbit') animation.playbackRate = orbitSpeed;
+      });
+      requestAnimationFrame(syncOrbitAnimations);
+    });
+
+    function angleAtDistance(distance) {
+      const distances = cometPath.distances;
+      let low = 0;
+      let high = orbitSamples;
+      while (high - low > 1) {
+        const middle = (low + high) >> 1;
+        if (distances[middle] <= distance) low = middle;
+        else high = middle;
+      }
+      const segment = distances[high] - distances[low];
+      const fraction = segment ? (distance - distances[low]) / segment : 0;
+      return (low + fraction) * Math.PI * 2 / orbitSamples;
+    }
+
+    function animateInterloper(now) {
+      const frameDelta = previousFrameTime === null ? 0 : Math.min(now - previousFrameTime, 100);
+      previousFrameTime = now;
+
+      // The Sun uses left/top 50% with translate(-50%, -50%), so its
+      // offset position is already the center point in the system.
+      const sunCenterX = sun.offsetLeft;
+      const sunCenterY = sun.offsetTop;
+
+      const baselineDistance = cometProgress * cometPath.length;
+      const baselineAngle = angleAtDistance(baselineDistance);
+      const baselineX = cometPath.centerX + cometPath.radiusX * Math.cos(baselineAngle);
+      const baselineY = cometPath.centerY + cometPath.radiusY * Math.sin(baselineAngle);
+      const distanceToSun = Math.hypot(sunCenterX - baselineX, sunCenterY - baselineY);
+      const maxBoostDistance = sun.offsetWidth * 1.8;
+      const speedBoost = 1 + Math.max(0, 1 - distanceToSun / maxBoostDistance) * 3;
+
+      if (!reducedMotion.matches && previousFrameTime !== null) {
+        cometProgress = (cometProgress + (frameDelta / orbitDuration) * speedBoost) % 1;
+      }
+
+      const distance = cometProgress * cometPath.length;
+      const angle = angleAtDistance(distance);
+      const x = cometPath.centerX + cometPath.radiusX * Math.cos(angle);
+      const y = cometPath.centerY + cometPath.radiusY * Math.sin(angle);
+      // A conic gradient uses the visible polar angle, which differs from
+      // the ellipse parameter when the horizontal and vertical radii differ.
+      const trailAngle = Math.atan2(y - cometPath.centerY, x - cometPath.centerX);
+      interloperOrbit.style.setProperty('--trail-angle', `${trailAngle * 180 / Math.PI}deg`);
+
+      // The unrotated sprite's head points left, so turn its left-facing axis
+      // toward the Sun rather than its right-facing axis.
+      // Aim at the Sun's visual center. The sprite's long body shifts the
+      // apparent gaze slightly right, so use a small left-side target bias.
+      const targetAngle = Math.atan2(
+        sunCenterY - y,
+        (sunCenterX + sun.offsetWidth * .08) - x
+      ) * 180 / Math.PI;
+      const visualAngle = targetAngle + 180;
+      interloper.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) rotate(${visualAngle}deg) scale(var(--object-scale, 1))`;
+
+      if (!reducedMotion.matches) requestAnimationFrame(animateInterloper);
+    }
+    requestAnimationFrame(animateInterloper);
+  </script>
+  <script src="./wallpaper-settings.js"></script>
+</body>
+</html>

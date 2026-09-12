@@ -1,0 +1,107 @@
+{
+  "description": "An animated Outer Wilds-inspired star system with orbiting planets and moons, the Interloper, The Stranger eclipsing the Sun, and a live clock. Customize the system's size and speed, orbit trails, stars, background, and clock in Wallpaper Engine.",
+  "file": "index.html",
+  "general": {
+    "properties": {
+      "skycolor": {
+        "order": 0,
+        "text": "Background · color",
+        "type": "color",
+        "value": "0.011765 0.015686 0.019608"
+      },
+      "starsamount": {
+        "order": 1,
+        "text": "Background · star density (%)",
+        "type": "slider",
+        "value": 100,
+        "min": 0,
+        "max": 300,
+        "editable": true
+      },
+      "orbitstyle": {
+        "order": 2,
+        "text": "Orbits · appearance",
+        "type": "combo",
+        "value": "full",
+        "options": [
+          {
+            "label": "Full orbit",
+            "value": "full"
+          },
+          {
+            "label": "Fading trail",
+            "value": "trail"
+          },
+          {
+            "label": "Hidden",
+            "value": "hidden"
+          }
+        ]
+      },
+      "pathopacity": {
+        "order": 3,
+        "text": "Orbits · opacity (%)",
+        "type": "slider",
+        "value": 36,
+        "min": 0,
+        "max": 100,
+        "editable": true
+      },
+      "motionspeed": {
+        "order": 4,
+        "text": "Motion · overall speed (%)",
+        "type": "slider",
+        "value": 100,
+        "min": 25,
+        "max": 300,
+        "editable": true
+      },
+      "fullsystemscale": {
+        "order": 5,
+        "text": "Size · entire star system (%)",
+        "type": "slider",
+        "value": 100,
+        "min": 50,
+        "max": 150,
+        "editable": true
+      },
+      "clocksize": {
+        "order": 6,
+        "text": "Clock · font size (px)",
+        "type": "slider",
+        "value": 42,
+        "min": 24,
+        "max": 100,
+        "editable": true
+      },
+      "clocktop": {
+        "order": 7,
+        "text": "Clock · top (e.g. 2.5% or 30px)",
+        "type": "textinput",
+        "value": "2.5%"
+      },
+      "clockleft": {
+        "order": 8,
+        "text": "Clock · left (e.g. 50% or 300px)",
+        "type": "textinput",
+        "value": "50%"
+      },
+      "strangerenabled": {
+        "order": 9,
+        "text": "The Stranger · show",
+        "type": "checkbox",
+        "value": true
+      }
+    }
+  },
+  "monetization": false,
+  "preview": "preview.jpg",
+  "tags": [
+    "Abstract",
+    "Sci-Fi"
+  ],
+  "title": "Outer Wilds Star System Live Wallpaper",
+  "type": "web",
+  "visibility": "public",
+  "workshopid": 793602574
+}
