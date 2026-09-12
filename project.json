@@ -1,5 +1,5 @@
 {
-  "description": "An animated Outer Wilds-inspired star system with orbiting planets and moons, the Interloper, and a live clock. Customize the system's size and speed, orbit trails, stars, background, and clock in Wallpaper Engine.",
+  "description": "An animated Outer Wilds-inspired star system with orbiting planets and moons, the Interloper, The Stranger eclipsing the Sun, and a live clock. Customize the system's size and speed, orbit trails, stars, background, and clock in Wallpaper Engine.",
   "file": "index.html",
   "general": {
     "properties": {
@@ -85,6 +85,12 @@
         "text": "Clock · left (e.g. 50% or 300px)",
         "type": "textinput",
         "value": "50%"
+      },
+      "strangerenabled": {
+        "order": 9,
+        "text": "The Stranger · show",
+        "type": "checkbox",
+        "value": true
       }
     }
   },

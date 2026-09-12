@@ -5,7 +5,7 @@
   --orange: #f47d30;
   --orbit: rgba(237, 240, 238, .36);
   --system-size: min(115vmin, 115vw);
-  --system-scale: .5;
+  --system-scale: .8;
   --clock-size: 52px;
   --background-color: #030405;
   --orbit-opacity: .36;
@@ -68,6 +68,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   position: absolute; top: 52%; left: 50%;
   width: var(--system-size); height: var(--system-size);
   transform: translate(-50%, -50%) scale(var(--system-scale));
+  pointer-events: none;
 }
 .orbit {
   position: absolute; top: 50%; left: 50%;
@@ -82,7 +83,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 .orbit--bramble { --diameter: 96%; --start: 48deg; --period: 265s; }
 
 .sun-glow {
-  position: absolute; z-index: 2; top: 50%; left: 50%;
+  position: absolute; z-index: 1; top: 50%; left: 50%;
   width: 18%; height: 18%; border-radius: 50%;
   transform: translate(-50%, -50%);
   background: radial-gradient(circle, rgba(255, 125, 24, .45), rgba(255, 125, 24, .15) 48%, transparent 74%);
@@ -94,6 +95,45 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   transform: translate(-50%, -50%) scale(var(--object-scale, 1));
   animation: sun-pulse 8s ease-in-out infinite alternate;
 }
+.stranger-wrap {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  left: 50%;
+  width: 15%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0;
+}
+.stranger-shadow {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle at center,
+    #000 0%, #000 74%, rgba(0, 0, 0, .55) 90%, transparent 100%);
+  opacity: 1;
+}
+.stranger {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  height: auto;
+  aspect-ratio: 954 / 882;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  pointer-events: none;
+  filter: brightness(1.15);
+}
+.stranger-disabled .stranger-wrap { display: none; }
 .sun-station-orbit {
   position: absolute; z-index: 4; top: 50%; left: 50%;
   width: calc(19% * var(--orbit-scale, 1)); height: calc(19% * var(--orbit-scale, 1));
@@ -160,7 +200,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 }
 .moon--orbital-probe { --size: clamp(29px, 4.2vmin, 38px); }
 .quantum-orbit {
-  position: absolute; z-index: 3; top: 50%; left: 100%;
+  position: absolute; z-index: 6; top: 50%; left: 100%;
   --period: 16s;
   width: calc(clamp(86px, 12vmin, 138px) * var(--orbit-scale, 1));
   height: calc(clamp(86px, 12vmin, 138px) * var(--orbit-scale, 1));
@@ -169,6 +209,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   opacity: 1;
   animation: moon-orbit var(--period, 16s) linear infinite;
   transition: opacity .35s ease;
+  pointer-events: none;
 }
 .traveller--giants .quantum-orbit,
 .traveller--bramble .quantum-orbit {
@@ -176,8 +217,16 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   height: calc(clamp(104px, 15vmin, 172px) * var(--orbit-scale, 1));
 }
 .quantum-orbit--shifting { opacity: 0; }
-.quantum-moon {
+.quantum-hover-target {
   position: absolute; top: 50%; left: 100%;
+  width: clamp(44px, 6vmin, 70px); height: clamp(44px, 6vmin, 70px);
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  cursor: pointer;
+}
+.quantum-moon {
+  position: absolute; top: 50%; left: 50%;
+  z-index: 7;
   width: clamp(27px, 4vmin, 46px); height: auto;
   transform: translate(-50%, -50%) scale(var(--object-scale, 1));
   filter: drop-shadow(0 0 5px rgba(150, 153, 198, .25));
@@ -194,7 +243,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 .interloper {
   position: absolute; z-index: 4;
   width: clamp(12px, 2.8vmin, 32px); height: auto;
-  transform: translate(-50%, -50%) rotate(+45deg) scale(var(--object-scale, 1));
+  transform: translate(-50%, -50%) scale(var(--object-scale, 1));
   filter: drop-shadow(0 0 5px rgba(83, 192, 215, .4));
 }
 .white-hole {

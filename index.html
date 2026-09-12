@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#030405">
   <title>Outer Wilds — Sistema solare</title>
+  <script>
+    // code-server can open /proxy/3600 without a trailing slash. Resolve
+    // relative assets inside that port instead of at /proxy/.
+    if (/\/proxy\/\d+$/.test(location.pathname)) {
+      const base = document.createElement('base');
+      base.href = `${location.pathname}/`;
+      document.head.append(base);
+    }
+  </script>
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="./solar.css">
 </head>
 <body>
@@ -19,6 +29,10 @@
     <div class="solar-system" aria-hidden="true">
       <div class="sun-glow"></div>
       <img class="sun" src="./assets/Sun.png" alt="" draggable="false">
+      <div id="stranger-wrap" class="stranger-wrap">
+        <div id="stranger-shadow" class="stranger-shadow"></div>
+        <img id="stranger" class="stranger" src="./assets/Stranger.png" alt="" draggable="false">
+      </div>
       <div class="sun-station-orbit">
         <img class="sun-station" src="./assets/Sun_Station.png" alt="" draggable="false">
       </div>
@@ -51,7 +65,7 @@
         <div class="traveller traveller--giants">
           <img class="planet planet--giants" src="./assets/Giant's_Deep.png" alt="" draggable="false">
           <span class="moon-orbit moon-orbit--giants"><img class="moon moon--orbital-probe" src="./assets/Probe_Cannon.png" alt="" draggable="false"></span>
-          <span id="quantum-orbit" class="quantum-orbit"><img class="quantum-moon" src="./assets/Quantum_Moon.png" alt="" draggable="false"></span>
+          <span id="quantum-orbit" class="quantum-orbit"><span class="quantum-hover-target"><img class="quantum-moon" src="./assets/Quantum_Moon.png" alt="" draggable="false"></span></span>
         </div>
       </div>
 
@@ -68,6 +82,11 @@
   </main>
   <script>
     const timeElement = document.getElementById('time');
+    const system = document.querySelector('.solar-system');
+    const sun = document.querySelector('.sun');
+    const strangerWrap = document.getElementById('stranger-wrap');
+    const strangerShadow = document.getElementById('stranger-shadow');
+    const stranger = document.getElementById('stranger');
     const interloper = document.getElementById('interloper');
     const interloperOrbit = document.querySelector('.interloper-orbit');
 
@@ -88,8 +107,11 @@
       '.traveller--giants', '.traveller--bramble'
     ].map(selector => document.querySelector(selector));
     let currentQuantumHost = 3;
+    let quantumTransitioning = false;
 
     function moveQuantumMoon() {
+      if (quantumTransitioning) return;
+      quantumTransitioning = true;
       quantumOrbit.classList.add('quantum-orbit--shifting');
       setTimeout(() => {
         // Pick any of the other four planets, never the current one.
@@ -98,10 +120,17 @@
         quantumHosts[currentQuantumHost].append(quantumOrbit);
         requestAnimationFrame(() => requestAnimationFrame(() => {
           quantumOrbit.classList.remove('quantum-orbit--shifting');
+          quantumTransitioning = false;
           syncOrbitAnimations();
         }));
       }, 350);
     }
+
+    const quantumHoverTarget = document.querySelector('.quantum-hover-target');
+    quantumHoverTarget.addEventListener('pointerenter', moveQuantumMoon);
+    // Wallpaper Engine's embedded browser also reports mouseenter reliably
+    // when an animated object moves underneath a stationary cursor.
+    quantumHoverTarget.addEventListener('mouseenter', moveQuantumMoon);
 
     let orbitSpeed = 1;
     let quantumShiftTimer = setInterval(moveQuantumMoon, 30000);
@@ -116,8 +145,26 @@
     // Sample the ellipse by arc length so the comet covers equal distances
     // in equal time without leaving its orbit.
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const strangerDuration = 60000;
+    // Start just before the first crossing, outside the Sun; the midpoint
+    // arrives after roughly five seconds, then repeats once per minute.
+    let strangerProgress = .42;
+    let strangerDirection = 0;
+    let strangerYOffset = 0;
+    let strangerReady = false;
+    function randomizeStrangerPath() {
+      strangerDirection = Math.random() * Math.PI * 2;
+      strangerYOffset = (Math.random() * 2 - 1) * sun.offsetWidth * .22;
+    }
+    function measureStranger() {
+      strangerReady = stranger.complete && stranger.naturalWidth > 0;
+      randomizeStrangerPath();
+    }
+    stranger.addEventListener('load', measureStranger);
+    window.addEventListener('resize', measureStranger);
+    measureStranger();
     let orbitDuration = 180000;
-    let cometProgress = null;
+    let cometProgress = 0.5;
     let previousFrameTime = null;
     const orbitSamples = 720;
     let cometPath;
@@ -139,12 +186,11 @@
         previousX = x;
         previousY = y;
       }
-      const initialIndex = 1.8 * orbitSamples / (Math.PI * 2);
-      const lowerIndex = Math.floor(initialIndex);
-      const initialDistance = distances[lowerIndex] +
-        (distances[lowerIndex + 1] - distances[lowerIndex]) * (initialIndex - lowerIndex);
+      // Start the Interloper at the exact leftmost ellipse point. In this
+      // sampled ellipse, distance 0 is the rightmost point, so half the orbit
+      // length is the leftmost point.
       cometPath = { centerX, centerY, radiusX, radiusY, distances,
-        length: distances[orbitSamples], initialDistance };
+        length: distances[orbitSamples], initialDistance: distances[orbitSamples] / 2 };
     }
     measureCometPath();
     window.addEventListener('resize', measureCometPath);
@@ -171,11 +217,26 @@
     }
 
     function animateInterloper(now) {
-      if (cometProgress === null) cometProgress = cometPath.initialDistance / cometPath.length;
-      if (!reducedMotion.matches && previousFrameTime !== null) {
-        cometProgress = (cometProgress + Math.min(now - previousFrameTime, 100) / orbitDuration) % 1;
-      }
+      const frameDelta = previousFrameTime === null ? 0 : Math.min(now - previousFrameTime, 100);
       previousFrameTime = now;
+
+      // The Sun uses left/top 50% with translate(-50%, -50%), so its
+      // offset position is already the center point in the system.
+      const sunCenterX = sun.offsetLeft;
+      const sunCenterY = sun.offsetTop;
+
+      const baselineDistance = cometProgress * cometPath.length;
+      const baselineAngle = angleAtDistance(baselineDistance);
+      const baselineX = cometPath.centerX + cometPath.radiusX * Math.cos(baselineAngle);
+      const baselineY = cometPath.centerY + cometPath.radiusY * Math.sin(baselineAngle);
+      const distanceToSun = Math.hypot(sunCenterX - baselineX, sunCenterY - baselineY);
+      const maxBoostDistance = sun.offsetWidth * 1.8;
+      const speedBoost = 1 + Math.max(0, 1 - distanceToSun / maxBoostDistance) * 3;
+
+      if (!reducedMotion.matches && previousFrameTime !== null) {
+        cometProgress = (cometProgress + (frameDelta / orbitDuration) * speedBoost) % 1;
+      }
+
       const distance = cometProgress * cometPath.length;
       const angle = angleAtDistance(distance);
       const x = cometPath.centerX + cometPath.radiusX * Math.cos(angle);
@@ -186,6 +247,46 @@
       interloperOrbit.style.setProperty('--trail-angle', `${trailAngle * 180 / Math.PI}deg`);
       interloper.style.left = `${x}px`;
       interloper.style.top = `${y}px`;
+
+      // The unrotated sprite's head points left, so turn its left-facing axis
+      // toward the Sun rather than its right-facing axis.
+      // Aim at the Sun's visual center. The sprite's long body shifts the
+      // apparent gaze slightly right, so use a small left-side target bias.
+      const targetAngle = Math.atan2(
+        sunCenterY - y,
+        (sunCenterX + sun.offsetWidth * .08) - x
+      ) * 180 / Math.PI;
+      const visualAngle = targetAngle + 180;
+      interloper.style.transform = `translate(-50%, -50%) rotate(${visualAngle}deg) scale(var(--object-scale, 1))`;
+
+      if (strangerReady) {
+        strangerProgress = (strangerProgress + frameDelta / strangerDuration) % 1;
+        if (strangerProgress < frameDelta / strangerDuration) randomizeStrangerPath();
+        const pathDistance = (strangerProgress - .5) * Math.max(cometPath.radiusX, cometPath.radiusY) * 2.2;
+        const strangerX = sunCenterX + Math.cos(strangerDirection) * pathDistance;
+        // Each one-minute path crosses the Sun at a different Y height.
+        const strangerY = sunCenterY + strangerYOffset + Math.sin(strangerDirection) * pathDistance;
+        const strangerRadius = sun.offsetWidth * .49;
+        const strangerFeather = Math.max(4, strangerRadius * .3);
+        const maskRadius = strangerRadius + strangerFeather * .35;
+        strangerWrap.style.left = `${strangerX}px`;
+        strangerWrap.style.top = `${strangerY}px`;
+        strangerWrap.style.opacity = '1';
+        stranger.style.opacity = '1';
+        strangerShadow.style.opacity = '1';
+        const wrapperMaskCenter = `${sunCenterX - strangerX + strangerWrap.offsetWidth / 2}px ${sunCenterY - strangerY + strangerWrap.offsetHeight / 2}px`;
+        strangerWrap.style.webkitMaskImage = `radial-gradient(circle ${maskRadius}px at ${wrapperMaskCenter}, #000 0%, #000 ${strangerRadius - strangerFeather}px, transparent ${maskRadius}px)`;
+        strangerWrap.style.maskImage = strangerWrap.style.webkitMaskImage;
+        const sunLeft = sunCenterX - sun.offsetWidth / 2;
+        const sunTop = sunCenterY - sun.offsetHeight / 2;
+        const holeX = strangerX - sunLeft;
+        const holeY = strangerY - sunTop;
+        const holeRadius = strangerRadius * 1.12;
+        const holeFeather = Math.max(3, holeRadius * .25);
+        sun.style.webkitMaskImage = `radial-gradient(circle ${holeRadius}px at ${holeX}px ${holeY}px, transparent 0%, transparent ${holeRadius - holeFeather}px, #fff ${holeRadius}px)`;
+        sun.style.maskImage = sun.style.webkitMaskImage;
+      }
+
       if (!reducedMotion.matches) requestAnimationFrame(animateInterloper);
     }
     requestAnimationFrame(animateInterloper);
