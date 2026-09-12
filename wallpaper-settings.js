@@ -21,13 +21,6 @@ window.wallpaperPropertyListener = {
       if (key === 'strangerenabled') {
         const enabled = property.value === true || property.value === 1 || property.value === '1';
         document.documentElement.classList.toggle('stranger-disabled', !enabled);
-        if (!enabled) {
-          const sun = document.querySelector('.sun');
-          if (sun) {
-            sun.style.webkitMaskImage = 'none';
-            sun.style.maskImage = 'none';
-          }
-        }
         continue;
       }
       if (key === 'skycolor') {

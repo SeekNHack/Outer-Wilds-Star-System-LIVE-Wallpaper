@@ -1,5 +1,11 @@
 @charset "UTF-8";
 
+@property --stranger-distance {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
 :root {
   color-scheme: dark;
   --orange: #f47d30;
@@ -69,6 +75,11 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   width: var(--system-size); height: var(--system-size);
   transform: translate(-50%, -50%) scale(var(--system-scale));
   pointer-events: none;
+  --stranger-travel: calc(var(--system-size) * .3575);
+  --stranger-cos: 1;
+  --stranger-sin: 0;
+  --stranger-y-offset: 0px;
+  animation: stranger-crossing 60s linear -25.2s infinite;
 }
 .orbit {
   position: absolute; top: 50%; left: 50%;
@@ -94,17 +105,37 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   width: 14%; height: 14%; object-fit: contain;
   transform: translate(-50%, -50%) scale(var(--object-scale, 1));
   animation: sun-pulse 8s ease-in-out infinite alternate;
+  -webkit-mask-image: radial-gradient(
+    circle calc(var(--system-size) * .0768) at
+    calc(50% + var(--stranger-distance) * var(--stranger-cos))
+    calc(50% + var(--stranger-distance) * var(--stranger-sin) + var(--stranger-y-offset)),
+    transparent 0%, transparent 75%, #fff 100%);
+  mask-image: radial-gradient(
+    circle calc(var(--system-size) * .0768) at
+    calc(50% + var(--stranger-distance) * var(--stranger-cos))
+    calc(50% + var(--stranger-distance) * var(--stranger-sin) + var(--stranger-y-offset)),
+    transparent 0%, transparent 75%, #fff 100%);
 }
 .stranger-wrap {
   position: absolute;
   z-index: 2;
-  top: 50%;
-  left: 50%;
-  width: 15%;
+  top: 50%; left: 50%;
+  width: 18%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  opacity: 0;
+  -webkit-mask-image: radial-gradient(circle calc(var(--system-size) * .079) at center,
+    #000 0%, #000 61%, transparent 100%);
+  mask-image: radial-gradient(circle calc(var(--system-size) * .079) at center,
+    #000 0%, #000 61%, transparent 100%);
+}
+.stranger-motion {
+  position: absolute;
+  top: calc(50% + var(--stranger-distance) * var(--stranger-sin) + var(--stranger-y-offset));
+  left: calc(50% + var(--stranger-distance) * var(--stranger-cos));
+  width: 83.333%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
 }
 .stranger-shadow {
   position: absolute;
@@ -118,7 +149,6 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   border-radius: 50%;
   background: radial-gradient(circle at center,
     #000 0%, #000 74%, rgba(0, 0, 0, .55) 90%, transparent 100%);
-  opacity: 1;
 }
 .stranger {
   position: absolute;
@@ -129,11 +159,11 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   height: auto;
   aspect-ratio: 954 / 882;
   transform: translate(-50%, -50%);
-  opacity: 0;
   pointer-events: none;
   filter: brightness(1.15);
 }
 .stranger-disabled .stranger-wrap { display: none; }
+.stranger-disabled .sun { -webkit-mask-image: none; mask-image: none; }
 .sun-station-orbit {
   position: absolute; z-index: 4; top: 50%; left: 50%;
   width: calc(19% * var(--orbit-scale, 1)); height: calc(19% * var(--orbit-scale, 1));
@@ -242,9 +272,12 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 }
 .interloper {
   position: absolute; z-index: 4;
+  left: 0;
+  top: 0;
   width: clamp(12px, 2.8vmin, 32px); height: auto;
   transform: translate(-50%, -50%) scale(var(--object-scale, 1));
   filter: drop-shadow(0 0 5px rgba(83, 192, 215, .4));
+  will-change: left, top, transform;
 }
 .white-hole {
   position: absolute; z-index: 3;
@@ -304,6 +337,10 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 }
 
 @keyframes orbit { from { transform: rotate(var(--start)); } to { transform: rotate(calc(var(--start) + 360deg)); } }
+@keyframes stranger-crossing {
+  from { --stranger-distance: calc(var(--stranger-travel) * -1); }
+  to { --stranger-distance: var(--stranger-travel); }
+}
 @keyframes binary-spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 @keyframes station-orbit { from { transform: translate(-50%, -50%) rotate(-90deg); } to { transform: translate(-50%, -50%) rotate(270deg); } }
 @keyframes moon-orbit { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
@@ -317,4 +354,5 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+  .solar-system { animation: none; --stranger-distance: calc(var(--stranger-travel) * -.16); }
 }
