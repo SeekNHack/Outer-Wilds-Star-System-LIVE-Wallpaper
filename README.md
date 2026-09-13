@@ -41,7 +41,7 @@ The small white body with a red glow circles outside the largest planetary orbit
 
 ### Timeline by countdown at a 22-minute duration
 
-The first column shows **time remaining**, as displayed by the countdown, from 22:00 down to 0:00. Story milestones scale proportionally when the loop duration changes. The Sun Station's descent begins at 10:30 on this countdown and lasts five seconds regardless of loop duration.
+The first column shows **time remaining**, as displayed by the countdown, from 22:00 down to 0:00. Visible events scale proportionally when the loop duration changes. The Sun Station's descent begins at 10:30 on this countdown and lasts five seconds regardless of loop duration.
 
 | Countdown | Event in the wallpaper |
 | --- | --- |
@@ -49,17 +49,16 @@ The first column shows **time remaining**, as displayed by the countdown, from 2
 | About 21:58 | On later cycles, the cannon fires just after the scene fades back in. |
 | About 21:00 | The probe begins fading after one minute of flight, or about 20:58 on later cycles. |
 | 20:00 | Sand starts flowing between the Hourglass Twins. |
-| 16:45 | Sun Station warp pad becomes accessible in the story; no separate warp effect is shown. |
-| 15:20 | The Stranger opens its sails, shown by a brighter glow. |
-| 14:10 | Ash Twin warp pad becomes accessible in the story; no separate warp effect is shown. |
+| 15:20 | The Stranger becomes brighter. |
 | 10:30 | The Sun Station starts spiraling inward while continuing to orbit the Sun. |
 | 10:25 | The Sun Station finishes entering the Sun and has faded away. |
-| 9:00 | The Stranger's dam breaks, marked by a slight brightening. |
-| 2:00 | The Interloper can be swallowed from this point, when its icy head first enters the visible Sun. It then fades out. |
+| 9:00 | The Stranger brightens again. |
+| 2:00 | The Interloper can be swallowed once its icy head enters the visible Sun. |
+| About 1:59 | At the default motion speed, the Interloper reaches the Sun and fades out. Changing the overall motion speed can shift this crossing. |
 | 1:42 | The sand flow begins its 1.5-second fade-out. |
 | 1:40 | The sand flow has completely stopped. |
-| 1:30 | The Stranger tilts as the Island Tower falls. |
-| 1:25 | End Times begins; the stars have fully disappeared. |
+| 1:30 | The Stranger tilts. |
+| 1:00 | The last stars disappear completely. |
 | 0:00 | The countdown reaches zero and the red Sun begins to collapse and turn blue. |
 
 The countdown hides at 0:00. The 26-second finale continues afterward:
