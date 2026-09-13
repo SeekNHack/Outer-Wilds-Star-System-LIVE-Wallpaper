@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="it">
+<html lang="it" class="loop-countdown-enabled">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,8 +15,12 @@
     <header class="clock" aria-label="Ora corrente">
       <time id="time" class="clock__time">--:--</time>
     </header>
+    <div class="loop-countdown" aria-label="Tempo rimanente all'esplosione">
+      <span id="loop-remaining">22:00</span>
+    </div>
 
     <div class="solar-system" aria-hidden="true">
+      <canvas id="orbit-paths" class="orbit-paths"></canvas>
       <div class="sun-glow"></div>
       <div class="sun"><img class="sun__image" src="./assets/Sun.png" alt="" draggable="false"></div>
       <div class="stranger-wrap">
@@ -56,7 +60,7 @@
       <div class="orbit orbit--giants">
         <div class="traveller traveller--giants">
           <img class="planet planet--giants" src="./assets/Giant's_Deep.png" alt="" draggable="false">
-          <span class="moon-orbit moon-orbit--giants"><img class="moon moon--orbital-probe" src="./assets/Probe_Cannon.png" alt="" draggable="false"></span>
+          <span class="moon-orbit moon-orbit--giants"><img class="moon moon--orbital-probe" src="./assets/Probe_Cannon.png" alt="" draggable="false"><span class="probe-burst"></span></span>
           <span id="quantum-orbit" class="quantum-orbit"><span class="quantum-hover-target"><img class="quantum-moon" src="./assets/Quantum_Moon.png" alt="" draggable="false"></span></span>
         </div>
       </div>
@@ -67,10 +71,18 @@
         </div>
       </div>
 
+      <div class="orbit orbit--beacon">
+        <div class="traveller traveller--beacon">
+          <span class="outer-beacon" aria-label="Corpo luminoso esterno"></span>
+        </div>
+      </div>
+
       <div class="interloper-orbit"></div>
       <img id="interloper" class="interloper" src="./assets/interloper.png" alt="" draggable="false">
       <img class="white-hole" src="./assets/White_Hole.png" alt="" draggable="false">
     </div>
+    <span class="probe-shot" aria-hidden="true"></span>
+    <canvas id="explosion-particles" class="explosion-particles" aria-hidden="true"></canvas>
   </main>
   <script>
     const timeElement = document.getElementById('time');
@@ -93,10 +105,15 @@
     const quantumOrbit = document.getElementById('quantum-orbit');
     const quantumHosts = [
       '.traveller--twins', '.traveller--timber', '.traveller--brittle',
-      '.traveller--giants', '.traveller--bramble'
+      '.traveller--giants', '.traveller--bramble', null
     ].map(selector => document.querySelector(selector));
     let currentQuantumHost = Math.floor(Math.random() * quantumHosts.length);
-    quantumHosts[currentQuantumHost].append(quantumOrbit);
+    function placeQuantumMoon() {
+      const host = quantumHosts[currentQuantumHost];
+      quantumOrbit.classList.toggle('quantum-orbit--absent', !host);
+      (host || system).append(quantumOrbit);
+    }
+    placeQuantumMoon();
     const quantumPeriod = parseFloat(getComputedStyle(quantumOrbit).getPropertyValue('--period'));
     quantumOrbit.style.animationDelay = `${-Math.random() * quantumPeriod}s`;
     let quantumTransitioning = false;
@@ -104,10 +121,10 @@
     let quantumTransitionId = 0;
 
     function selectNextQuantumHost() {
-      // Pick any of the other four planets, never the current one.
+      // Pick any other destination, including the empty sixth location.
       const nextOffset = 1 + Math.floor(Math.random() * (quantumHosts.length - 1));
       currentQuantumHost = (currentQuantumHost + nextOffset) % quantumHosts.length;
-      quantumHosts[currentQuantumHost].append(quantumOrbit);
+      placeQuantumMoon();
     }
 
     function moveQuantumMoon() {
@@ -124,7 +141,7 @@
           quantumTransitioning = false;
           syncOrbitAnimations();
         }));
-      }, 350);
+      }, 350 / previewScale);
     }
 
     function moveQuantumMoonBeforePause() {
@@ -145,6 +162,7 @@
     quantumHoverTarget.addEventListener('mouseenter', moveQuantumMoon);
 
     let orbitSpeed = 1;
+    let previewScale = 1;
     let strangerSpeed = .5;
     let quantumAutoShiftEnabled = true;
     let quantumShiftSeconds = 30;
@@ -154,7 +172,7 @@
     function updateQuantumShiftTimer() {
       clearInterval(quantumShiftTimer);
       quantumShiftTimer = quantumAutoShiftEnabled && !wallpaperPaused
-        ? setInterval(moveQuantumMoon, quantumShiftSeconds * 1000)
+        ? setInterval(moveQuantumMoon, quantumShiftSeconds * 1000 / previewScale)
         : undefined;
     }
     updateQuantumShiftTimer();
@@ -181,8 +199,17 @@
     function syncOrbitAnimations() {
       document.querySelectorAll('.traveller, .binary-system, .moon-orbit, .quantum-orbit, .sun-station-orbit')
         .forEach(element => element.getAnimations().forEach(animation => {
-          animation.playbackRate = orbitSpeed;
+          animation.playbackRate = orbitSpeed * previewScale;
         }));
+    }
+
+    const orbitAnimationNames = new Set(['orbit', 'binary-spin', 'moon-orbit', 'station-orbit', 'stranger-orbit']);
+    function syncLoopEffectAnimations() {
+      document.getAnimations().forEach(animation => {
+        if (!orbitAnimationNames.has(animation.animationName) && animation.playbackRate !== previewScale) {
+          animation.playbackRate = previewScale;
+        }
+      });
     }
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -207,6 +234,9 @@
     let orbitDuration = 180000;
     let cometProgress = 0.5;
     let previousFrameTime = null;
+    let cometCollisionArmed = false;
+    let cometSwallowed = false;
+    let cometWasInsideSun = false;
     const orbitSamples = 720;
     let cometPath;
     function measureCometPath() {
@@ -238,7 +268,7 @@
     function syncStrangerAnimation() {
       system.getAnimations().forEach(animation => {
         if (animation.animationName === 'stranger-orbit') {
-          animation.playbackRate = orbitSpeed * strangerSpeed;
+          animation.playbackRate = orbitSpeed * strangerSpeed * previewScale;
         }
       });
     }
@@ -249,9 +279,34 @@
     });
     window.addEventListener('wallpaper-speed-changed', event => {
       orbitSpeed = event.detail;
-      orbitDuration = 180000 / orbitSpeed;
+      orbitDuration = 180000 / (orbitSpeed * previewScale);
       syncStrangerAnimation();
       requestAnimationFrame(syncOrbitAnimations);
+    });
+    window.addEventListener('wallpaper-time-scale-changed', event => {
+      previewScale = Math.max(1, Number(event.detail) || 1);
+      orbitDuration = 180000 / (orbitSpeed * previewScale);
+      updateQuantumShiftTimer();
+      requestAnimationFrame(() => {
+        syncOrbitAnimations();
+        syncStrangerAnimation();
+        syncLoopEffectAnimations();
+      });
+    });
+    window.addEventListener('wallpaper-loop-comet-impact-ready', event => {
+      cometCollisionArmed = Boolean(event.detail);
+    });
+    window.addEventListener('wallpaper-loop-reset', () => {
+      cometCollisionArmed = false;
+      cometSwallowed = false;
+      cometWasInsideSun = false;
+      interloper.classList.remove('interloper--swallowed');
+      cometProgress = .5;
+      previousFrameTime = null;
+      document.querySelectorAll('.solar-system, .traveller, .binary-system, .moon-orbit, .quantum-orbit, .sun-station-orbit, .sun__image')
+        .forEach(element => element.getAnimations().forEach(animation => { animation.currentTime = 0; }));
+      syncOrbitAnimations();
+      syncStrangerAnimation();
     });
 
     function angleAtDistance(distance) {
@@ -269,6 +324,7 @@
     }
 
     function animateInterloper(now) {
+      if (previewScale > 1) syncLoopEffectAnimations();
       const frameDelta = previousFrameTime === null ? 0 : Math.min(now - previousFrameTime, 100);
       previousFrameTime = now;
 
@@ -285,7 +341,7 @@
       const maxBoostDistance = sun.offsetWidth * 1.8;
       const speedBoost = 1 + Math.max(0, 1 - distanceToSun / maxBoostDistance) * 3;
 
-      if (!reducedMotion.matches && previousFrameTime !== null) {
+      if (!reducedMotion.matches && !wallpaperPaused) {
         cometProgress = (cometProgress + (frameDelta / orbitDuration) * speedBoost) % 1;
       }
 
@@ -308,12 +364,26 @@
       ) * 180 / Math.PI;
       const visualAngle = targetAngle + 180;
       interloper.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) rotate(${visualAngle}deg) scale(var(--object-scale, 1))`;
+      const sunScale = parseFloat(document.documentElement.style.getPropertyValue('--loop-sun-scale')) || 1;
+      // The sprite's icy head points toward the Sun; detect its first contact
+      // with the visible disc rather than waiting for the sprite's center.
+      const visibleSunRadius = sun.offsetWidth * sunScale * .47;
+      const headDistance = Math.hypot(sunCenterX - x, sunCenterY - y) - interloper.offsetWidth * .38;
+      const cometInsideSun = headDistance <= visibleSunRadius;
+      if (cometCollisionArmed && !cometSwallowed && cometInsideSun && !cometWasInsideSun) {
+        cometSwallowed = true;
+        interloper.classList.add('interloper--swallowed');
+      }
+      cometWasInsideSun = cometInsideSun;
 
       if (!reducedMotion.matches) requestAnimationFrame(animateInterloper);
     }
     requestAnimationFrame(animateInterloper);
   </script>
   <script src="./starfield.js"></script>
+  <script src="./orbit-paths.js"></script>
   <script src="./wallpaper-settings.js"></script>
+  <script src="./explosion-particles.js"></script>
+  <script src="./loop.js"></script>
 </body>
 </html>

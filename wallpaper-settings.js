@@ -28,6 +28,30 @@ window.wallpaperPropertyListener = {
         window.dispatchEvent(new CustomEvent('wallpaper-quantum-auto-shift-changed', { detail: enabled }));
         continue;
       }
+      if (key === 'loopenabled') {
+        const enabled = property.value === true || property.value === 1 || property.value === '1' || property.value === 'true';
+        window.dispatchEvent(new CustomEvent('wallpaper-loop-enabled-changed', { detail: enabled }));
+        continue;
+      }
+      if (key === 'loopminutes') {
+        const minutes = Number(property.value);
+        if (Number.isFinite(minutes) && minutes >= 1) {
+          window.dispatchEvent(new CustomEvent('wallpaper-loop-minutes-changed', { detail: minutes }));
+        }
+        continue;
+      }
+      if (key === 'loopcountdown') {
+        const enabled = property.value === true || property.value === 1 || property.value === '1' || property.value === 'true';
+        document.documentElement.classList.toggle('loop-countdown-enabled', enabled);
+        continue;
+      }
+      if (key === 'loopacceleration') {
+        const percent = Number(property.value);
+        if (Number.isFinite(percent) && percent >= 100 && percent <= 3000) {
+          window.dispatchEvent(new CustomEvent('wallpaper-loop-acceleration-changed', { detail: percent }));
+        }
+        continue;
+      }
       if (key === 'quantumshiftseconds') {
         const seconds = Number(property.value);
         if (Number.isFinite(seconds) && seconds > 0) {

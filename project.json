@@ -1,5 +1,5 @@
 {
-  "description": "An animated Outer Wilds-inspired star system with orbiting planets and moons, the Interloper, The Stranger eclipsing the Sun, and a live clock. Customize the system's size and speed, orbit trails, stars, background, and clock in Wallpaper Engine.",
+  "description": "An animated Outer Wilds-inspired star system with orbiting planets and moons, the Interloper, The Stranger eclipsing the Sun, a live clock, and an optional timed supernova loop. Customize the system, stars, background, and clock in Wallpaper Engine.",
   "file": "index.html",
   "general": {
     "properties": {
@@ -13,7 +13,7 @@
         "order": 0,
         "text": "Star density (%)",
         "type": "slider",
-        "value": 100,
+        "value": 200,
         "min": 0,
         "max": 300,
         "editable": true
@@ -122,6 +122,39 @@
         "value": 30,
         "min": 1,
         "max": 120,
+        "editable": true
+      },
+      "loopenabled": {
+        "order": 14,
+        "text": "Loop",
+        "type": "bool",
+        "value": true
+      },
+      "loopminutes": {
+        "order": 15,
+        "condition": "loopenabled.value == true",
+        "text": "Loop · duration (minutes)",
+        "type": "slider",
+        "value": 22,
+        "min": 1,
+        "max": 60,
+        "editable": true
+      },
+      "loopcountdown": {
+        "order": 16,
+        "condition": "loopenabled.value == true",
+        "text": "Loop · show countdown",
+        "type": "bool",
+        "value": true
+      },
+      "loopacceleration": {
+        "order": 17,
+        "condition": "loopenabled.value == true",
+        "text": "Loop · speed (%)",
+        "type": "slider",
+        "value": 100,
+        "min": 100,
+        "max": 3000,
         "editable": true
       }
     }

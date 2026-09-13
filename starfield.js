@@ -13,11 +13,14 @@
   const starsPerMillionPixels = 220;
   let density = 100;
   let colored = true;
+  let loopVisibility = 1;
   let width = 0;
   let height = 0;
   let stars = [];
   let frameId = null;
   let lastFrameTime = null;
+  let timeScale = 1;
+  let starTime = 0;
 
   function makeStar() {
     const depth = Math.random();
@@ -65,13 +68,14 @@
       return;
     }
 
-    const elapsed = lastFrameTime === null ? 0 : Math.min((now - lastFrameTime) / 1000, .1);
+    const elapsed = lastFrameTime === null ? 0 : Math.min((now - lastFrameTime) / 1000, .1) * timeScale;
+    starTime += elapsed;
     lastFrameTime = now;
     context.clearRect(0, 0, width, height);
     for (const star of stars) {
       star.x = (star.x + star.speedX * elapsed) % width;
       star.y = (star.y + star.speedY * elapsed) % height;
-      const alpha = star.alpha * (.85 + .15 * Math.sin(now / 1000 * star.twinkleSpeed + star.phase));
+      const alpha = star.alpha * loopVisibility * (.85 + .15 * Math.sin(starTime * star.twinkleSpeed + star.phase));
       context.fillStyle = colored ? star.color : '#ffffff';
       if (star.size > 1.9) {
         context.globalAlpha = alpha * .08;
@@ -117,6 +121,13 @@
   window.addEventListener('wallpaper-star-colors-changed', event => {
     colored = event.detail;
     scheduleFrame();
+  });
+  window.addEventListener('wallpaper-loop-star-visibility', event => {
+    loopVisibility = Math.max(0, Math.min(1, Number(event.detail) || 0));
+    scheduleFrame();
+  });
+  window.addEventListener('wallpaper-time-scale-changed', event => {
+    timeScale = Math.max(1, Number(event.detail) || 1);
   });
   resizeStarfield();
 })();
