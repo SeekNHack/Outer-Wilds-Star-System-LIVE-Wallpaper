@@ -15,8 +15,6 @@
   const probeCannon = document.querySelector('.moon--orbital-probe');
   const probeShot = document.querySelector('.probe-shot');
   const countdownElement = document.getElementById('loop-remaining');
-  const previewMinutes = Number(new URLSearchParams(window.location.search).get('loopminutes'));
-  const hasPreviewMinutes = Number.isFinite(previewMinutes) && previewMinutes >= 1;
   const previewCountdown = new URLSearchParams(window.location.search).get('loopcountdown');
   const accelerationParam = Number(new URLSearchParams(window.location.search).get('loopacceleration'));
   const hasAccelerationParam = new URLSearchParams(window.location.search).has('loopacceleration') &&
@@ -38,8 +36,8 @@
   let accelerationPercent = hasAccelerationParam ? accelerationParam : 100;
   let accelerationSetByWallpaperEngine = false;
   let paused = false;
-  // File previews cannot read project.json; keep this fallback in sync with it.
-  let duration = (hasPreviewMinutes ? previewMinutes : 22) * 60;
+  // The loop is fixed at 22 minutes; only the acceleration speed is user-adjustable.
+  let duration = 22 * 60;
   let durationSetByWallpaperEngine = false;
   let elapsed = 0;
   let previousTime = null;
@@ -169,9 +167,10 @@
       if (cover <= 0) restarting = false;
     }
 
-    // The sky empties gradually, reaching zero as End Times begins.
-    const starProgress = smooth(storyTime / at(milestones.endTimes));
-    window.dispatchEvent(new CustomEvent('wallpaper-loop-star-visibility', { detail: 1 - starProgress }));
+    // Keep a few stars visible through End Times; the last vanish with 1:00 left.
+    const starProgress = clamp01(storyTime / at(ORIGINAL_SECONDS - 60));
+    const starVisibility = Math.pow(1 - starProgress, .7);
+    window.dispatchEvent(new CustomEvent('wallpaper-loop-star-visibility', { detail: starVisibility }));
 
     const redProgress = smooth(storyTime / storyDuration());
     window.dispatchEvent(new CustomEvent('wallpaper-loop-comet-impact-ready', {
@@ -237,18 +236,6 @@
     syncTimeScale();
     if (enabled && frameId === null) frameId = requestAnimationFrame(tick);
   });
-  window.addEventListener('wallpaper-loop-minutes-changed', event => {
-    const minutes = Number(event.detail);
-    if (!Number.isFinite(minutes) || minutes < 1) return;
-    durationSetByWallpaperEngine = true;
-    const nextDuration = minutes * 60;
-    elapsed = elapsed >= duration
-      ? nextDuration + (elapsed - duration)
-      : elapsed / duration * nextDuration;
-    duration = nextDuration;
-    syncTimeScale();
-    if (enabled) render();
-  });
   window.addEventListener('wallpaper-loop-acceleration-changed', event => {
     const percent = Number(event.detail);
     if (!Number.isFinite(percent) || percent < 100 || percent > 3000) return;
@@ -272,12 +259,6 @@
         return response.json();
       })
       .then(project => {
-        if (!hasPreviewMinutes && !durationSetByWallpaperEngine) {
-          const minutes = Number(project.general?.properties?.loopminutes?.value);
-          if (Number.isFinite(minutes) && minutes >= 1) {
-            window.dispatchEvent(new CustomEvent('wallpaper-loop-minutes-changed', { detail: minutes }));
-          }
-        }
         if (previewCountdown === null) {
           const countdown = project.general?.properties?.loopcountdown;
           if (countdown) window.wallpaperPropertyListener.applyUserProperties({ loopcountdown: countdown });

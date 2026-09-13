@@ -130,18 +130,8 @@
         "type": "bool",
         "value": true
       },
-      "loopminutes": {
-        "order": 15,
-        "condition": "loopenabled.value == true",
-        "text": "Loop · duration (minutes)",
-        "type": "slider",
-        "value": 22,
-        "min": 1,
-        "max": 60,
-        "editable": true
-      },
       "loopcountdown": {
-        "order": 16,
+        "order": 15,
         "condition": "loopenabled.value == true",
         "text": "Loop · show countdown",
         "type": "bool",

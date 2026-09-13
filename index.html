@@ -232,7 +232,9 @@
     // Sample the ellipse by arc length so the comet covers equal distances
     // in equal time without leaving its orbit.
     let orbitDuration = 180000;
-    let cometProgress = 0.5;
+    // Calibrated so the first Sun crossing after the 2:00 gate is near 1:59.
+    const cometStartProgress = .958;
+    let cometProgress = cometStartProgress;
     let previousFrameTime = null;
     let cometCollisionArmed = false;
     let cometSwallowed = false;
@@ -257,11 +259,8 @@
         previousX = x;
         previousY = y;
       }
-      // Start the Interloper at the exact leftmost ellipse point. In this
-      // sampled ellipse, distance 0 is the rightmost point, so half the orbit
-      // length is the leftmost point.
       cometPath = { centerX, centerY, radiusX, radiusY, distances,
-        length: distances[orbitSamples], initialDistance: distances[orbitSamples] / 2 };
+        length: distances[orbitSamples] };
     }
     measureCometPath();
     window.addEventListener('resize', measureCometPath);
@@ -301,7 +300,7 @@
       cometSwallowed = false;
       cometWasInsideSun = false;
       interloper.classList.remove('interloper--swallowed');
-      cometProgress = .5;
+      cometProgress = cometStartProgress;
       previousFrameTime = null;
       document.querySelectorAll('.solar-system, .traveller, .binary-system, .moon-orbit, .quantum-orbit, .sun-station-orbit, .sun__image')
         .forEach(element => element.getAnimations().forEach(animation => { animation.currentTime = 0; }));

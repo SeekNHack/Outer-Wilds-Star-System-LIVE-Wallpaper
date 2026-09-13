@@ -33,13 +33,6 @@ window.wallpaperPropertyListener = {
         window.dispatchEvent(new CustomEvent('wallpaper-loop-enabled-changed', { detail: enabled }));
         continue;
       }
-      if (key === 'loopminutes') {
-        const minutes = Number(property.value);
-        if (Number.isFinite(minutes) && minutes >= 1) {
-          window.dispatchEvent(new CustomEvent('wallpaper-loop-minutes-changed', { detail: minutes }));
-        }
-        continue;
-      }
       if (key === 'loopcountdown') {
         const enabled = property.value === true || property.value === 1 || property.value === '1' || property.value === 'true';
         document.documentElement.classList.toggle('loop-countdown-enabled', enabled);
