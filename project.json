@@ -60,7 +60,7 @@
         "order": 5,
         "text": "Size · entire star system (%)",
         "type": "slider",
-        "value": 100,
+        "value": 82,
         "min": 50,
         "max": 150,
         "editable": true
@@ -92,14 +92,24 @@
         "type": "bool",
         "value": true
       },
-      "quantumautoshift": {
+      "strangerspeed": {
         "order": 10,
+        "condition": "strangerenabled.value == true",
+        "text": "The Stranger · speed (%)",
+        "type": "slider",
+        "value": 50,
+        "min": 10,
+        "max": 200,
+        "editable": true
+      },
+      "quantumautoshift": {
+        "order": 11,
         "text": "Quantum Moon · timed shifting",
         "type": "bool",
         "value": true
       },
       "quantumshiftseconds": {
-        "order": 11,
+        "order": 12,
         "condition": "quantumautoshift.value == true",
         "text": "Quantum Moon · seconds between shifts",
         "type": "slider",

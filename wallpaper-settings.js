@@ -59,6 +59,8 @@ window.wallpaperPropertyListener = {
         document.documentElement.style.setProperty('--orbit-opacity', String(value / 100));
       } else if (key === 'motionspeed' && value > 0) {
         window.dispatchEvent(new CustomEvent('wallpaper-speed-changed', { detail: value / 100 }));
+      } else if (key === 'strangerspeed' && value > 0) {
+        window.dispatchEvent(new CustomEvent('wallpaper-stranger-speed-changed', { detail: value / 100 }));
       } else if (key === 'fullsystemscale') {
         document.documentElement.style.setProperty('--system-scale', String(value / 100));
       } else if (key === 'clocksize') {

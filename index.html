@@ -126,6 +126,7 @@
     quantumHoverTarget.addEventListener('mouseenter', moveQuantumMoon);
 
     let orbitSpeed = 1;
+    let strangerSpeed = .5;
     let quantumAutoShiftEnabled = true;
     let quantumShiftSeconds = 30;
     let wallpaperPaused = false;
@@ -210,12 +211,22 @@
     }
     measureCometPath();
     window.addEventListener('resize', measureCometPath);
+    function syncStrangerAnimation() {
+      system.getAnimations().forEach(animation => {
+        if (animation.animationName === 'stranger-orbit') {
+          animation.playbackRate = orbitSpeed * strangerSpeed;
+        }
+      });
+    }
+    syncStrangerAnimation();
+    window.addEventListener('wallpaper-stranger-speed-changed', event => {
+      strangerSpeed = event.detail;
+      syncStrangerAnimation();
+    });
     window.addEventListener('wallpaper-speed-changed', event => {
       orbitSpeed = event.detail;
       orbitDuration = 180000 / orbitSpeed;
-      system.getAnimations().forEach(animation => {
-        if (animation.animationName === 'stranger-orbit') animation.playbackRate = orbitSpeed;
-      });
+      syncStrangerAnimation();
       requestAnimationFrame(syncOrbitAnimations);
     });
 

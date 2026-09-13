@@ -16,12 +16,13 @@ The first column identifies the corresponding option in Wallpaper Engine.
 | **Background · star density (%)** | `100%` | `0–300%` | Adjusts star density; `0%` hides the stars. |
 | **Orbits · appearance** | Full orbit | Full orbit, Fading trail, Hidden | Shows complete paths, fading trails, or no paths. Celestial bodies keep moving when paths are hidden. |
 | **Orbits · opacity (%)** | `36%` | `0–100%` | Controls the visibility of orbit paths and trails. |
-| **Motion · overall speed (%)** | `100%` | `25–300%` | Changes the speed of orbiting bodies and the Interloper. It does not change the Quantum Moon's timer interval. |
-| **Size · entire star system (%)** | `100%` | `50–150%` | Scales the whole star system. |
+| **Motion · overall speed (%)** | `100%` | `25–300%` | Changes the speed of orbiting bodies, the Interloper, and The Stranger. It does not change the Quantum Moon's timer interval. |
+| **Size · entire star system (%)** | `82%` | `50–150%` | Scales the whole star system. |
 | **Clock · font size (px)** | `42px` | `24–100px` | Changes the clock's font size. |
 | **Clock · top** | `2.5%` | CSS position, such as `30px` | Sets the clock's distance from the top edge. |
 | **Clock · left** | `50%` | CSS position, such as `300px` | Positions the clock by its horizontal center; `50%` centers it on screen. |
 | **The Stranger · show** | On | On / off | Shows or hides The Stranger and its eclipse of the Sun. |
+| **The Stranger · speed (%)** | `50%` | `10–200%` | Sets The Stranger's speed relative to the overall speed. At `100%` overall speed, `50%` makes one orbit take about 120 seconds instead of 60. This setting appears only when The Stranger is shown. |
 | **Quantum Moon · timed shifting** | On | On / off | Enables or disables only the Moon's periodic shifts. |
 | **Quantum Moon · seconds between shifts** | `30s` | `1–120s` | Sets the interval between periodic shifts. This setting appears only when timed shifting is on. |
 
