@@ -96,7 +96,10 @@
       '.traveller--twins', '.traveller--timber', '.traveller--brittle',
       '.traveller--giants', '.traveller--bramble'
     ].map(selector => document.querySelector(selector));
-    let currentQuantumHost = 3;
+    let currentQuantumHost = Math.floor(Math.random() * quantumHosts.length);
+    quantumHosts[currentQuantumHost].append(quantumOrbit);
+    const quantumPeriod = parseFloat(getComputedStyle(quantumOrbit).getPropertyValue('--period'));
+    quantumOrbit.style.animationDelay = `${-Math.random() * quantumPeriod}s`;
     let quantumTransitioning = false;
 
     function moveQuantumMoon() {
@@ -123,7 +126,32 @@
     quantumHoverTarget.addEventListener('mouseenter', moveQuantumMoon);
 
     let orbitSpeed = 1;
-    let quantumShiftTimer = setInterval(moveQuantumMoon, 30000);
+    let quantumAutoShiftEnabled = true;
+    let quantumShiftSeconds = 30;
+    let wallpaperPaused = false;
+    let quantumShiftTimer;
+
+    function updateQuantumShiftTimer() {
+      clearInterval(quantumShiftTimer);
+      quantumShiftTimer = quantumAutoShiftEnabled && !wallpaperPaused
+        ? setInterval(moveQuantumMoon, quantumShiftSeconds * 1000)
+        : undefined;
+    }
+    updateQuantumShiftTimer();
+    window.addEventListener('wallpaper-quantum-auto-shift-changed', event => {
+      quantumAutoShiftEnabled = event.detail;
+      updateQuantumShiftTimer();
+    });
+    window.addEventListener('wallpaper-quantum-shift-seconds-changed', event => {
+      quantumShiftSeconds = event.detail;
+      updateQuantumShiftTimer();
+    });
+    window.addEventListener('wallpaper-pause-changed', event => {
+      const wasPaused = wallpaperPaused;
+      wallpaperPaused = event.detail;
+      if (wasPaused && !wallpaperPaused) moveQuantumMoon();
+      updateQuantumShiftTimer();
+    });
 
     function syncOrbitAnimations() {
       document.querySelectorAll('.traveller, .binary-system, .moon-orbit, .quantum-orbit, .sun-station-orbit')
@@ -185,8 +213,6 @@
     window.addEventListener('wallpaper-speed-changed', event => {
       orbitSpeed = event.detail;
       orbitDuration = 180000 / orbitSpeed;
-      clearInterval(quantumShiftTimer);
-      quantumShiftTimer = setInterval(moveQuantumMoon, 30000 / orbitSpeed);
       system.getAnimations().forEach(animation => {
         if (animation.animationName === 'stranger-orbit') animation.playbackRate = orbitSpeed;
       });

@@ -89,8 +89,24 @@
       "strangerenabled": {
         "order": 9,
         "text": "The Stranger · show",
-        "type": "checkbox",
+        "type": "bool",
         "value": true
+      },
+      "quantumautoshift": {
+        "order": 10,
+        "text": "Quantum Moon · timed shifting",
+        "type": "bool",
+        "value": true
+      },
+      "quantumshiftseconds": {
+        "order": 11,
+        "condition": "quantumautoshift.value == true",
+        "text": "Quantum Moon · seconds between shifts",
+        "type": "slider",
+        "value": 30,
+        "min": 1,
+        "max": 120,
+        "editable": true
       }
     }
   },

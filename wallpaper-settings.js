@@ -19,8 +19,20 @@ window.wallpaperPropertyListener = {
         continue;
       }
       if (key === 'strangerenabled') {
-        const enabled = property.value === true || property.value === 1 || property.value === '1';
+        const enabled = property.value === true || property.value === 1 || property.value === '1' || property.value === 'true';
         document.documentElement.classList.toggle('stranger-disabled', !enabled);
+        continue;
+      }
+      if (key === 'quantumautoshift') {
+        const enabled = property.value === true || property.value === 1 || property.value === '1' || property.value === 'true';
+        window.dispatchEvent(new CustomEvent('wallpaper-quantum-auto-shift-changed', { detail: enabled }));
+        continue;
+      }
+      if (key === 'quantumshiftseconds') {
+        const seconds = Number(property.value);
+        if (Number.isFinite(seconds) && seconds > 0) {
+          window.dispatchEvent(new CustomEvent('wallpaper-quantum-shift-seconds-changed', { detail: seconds }));
+        }
         continue;
       }
       if (key === 'skycolor') {
@@ -53,5 +65,8 @@ window.wallpaperPropertyListener = {
         document.documentElement.style.setProperty('--clock-size', `${value}px`);
       }
     }
+  },
+  setPaused(isPaused) {
+    window.dispatchEvent(new CustomEvent('wallpaper-pause-changed', { detail: isPaused }));
   }
 };
