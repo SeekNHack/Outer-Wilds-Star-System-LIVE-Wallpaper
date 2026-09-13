@@ -441,7 +441,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   border-color: transparent;
   box-shadow: none;
 }
-.trail-mode .orbit > .traveller::before,
+.trail-mode .orbit:not(.orbit--beacon) > .traveller::before,
 .trail-mode .moon-orbit::before,
 .trail-mode .interloper-orbit::before,
 .trail-mode .binary-system::before {
