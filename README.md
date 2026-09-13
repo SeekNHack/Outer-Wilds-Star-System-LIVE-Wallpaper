@@ -12,10 +12,6 @@ An animated web wallpaper inspired by the solar system of *Outer Wilds*. It feat
 - The optional loop follows a configurable version of the 22-minute timeline: sand flows between the twins, the Sun reddens and grows, the Interloper can be swallowed, the stars fade, and the Sun collapses and explodes before the scene restarts.
 - Show or hide the loop countdown. Set **Loop · speed (%)** to `100%` for normal playback or raise it to accelerate the entire loop, including orbital motion, without changing the story's timing relative to the planets.
 
-## Getting started
-
-Load `index.html` as a web wallpaper in Wallpaper Engine. Keep `project.json`, `solar.css`, `starfield.js`, `orbit-paths.js`, `wallpaper-settings.js`, `explosion-particles.js`, `loop.js`, and the `assets/` directory alongside it. The settings below are defined in `project.json` and appear in Wallpaper Engine's wallpaper properties panel. When previewing through a local HTTP server, the loop duration, countdown, and speed are read from `project.json`. A direct file preview defaults to a 22-minute story at normal speed, with the countdown visible; use `?loopacceleration=2243` to play the full loop in about one real minute, `?loopminutes=1` to change the story duration to one minute, or `?loopcountdown=0` to hide the timer. Browsers cannot read the adjacent JSON file automatically when opening `index.html` directly.
-
 ## Wallpaper Engine settings
 
 The first column identifies the corresponding option in Wallpaper Engine.
@@ -42,12 +38,6 @@ The first column identifies the corresponding option in Wallpaper Engine.
 | **Loop · speed (%)** | `100%` | `100–3000%` | Sets the playback speed of the loop, orbits, and other motion. `100%` is normal speed; about `2243%` compresses a 22-minute story and its finale to one real minute. Use `?loopacceleration=2243` in a browser preview. |
 
 The small white body with a red glow circles outside the largest planetary orbit. Its dashed path appears only while the pointer is over the body and follows the configured orbit opacity, including when other orbit paths are hidden.
-
-## Optional loop
-
-The loop starts when enabled. The Sun slowly grows by at most 35% and reddens, while stars gradually fade until the sky is empty at End Times. The Stranger's eclipse mask follows the Sun's size and closes as the Sun turns blue. With 10:30 remaining on a 22-minute countdown, the Sun Station begins spiraling inward and fades as it enters the Sun. When the configured duration expires, that same Sun begins a 26-second finale: it collapses over five seconds, holds its tiny blue remnant for about 0.2 seconds, then expands for about 20 seconds at a constant speed. Faint shockwaves accompany the expansion. The planets, orbit paths, and clock fade away behind it. As the Sun fades, the whole wallpaper turns black before the next cycle fades in over 1.8 seconds. Wallpaper Engine pauses the loop clock when it pauses the wallpaper. Changing the duration keeps the current percentage of the story or the current point in the finale. Turning the loop off immediately resets the Sun and scene to their normal appearance; turning it back on starts a new loop from zero.
-
-On subsequent cycles, the Orbital Probe Cannon fires about 2.3 loop seconds after the reset, just after the scene's fade-in. On the first load it fires immediately.
 
 ### Timeline by countdown at a 22-minute duration
 
@@ -81,7 +71,6 @@ The countdown hides at 0:00. The 26-second finale continues afterward:
 | +23.4s | The expanding Sun and scene begin fading to black. |
 | +26s | The loop resets; the scene fades back in over 1.8 seconds. |
 
-The wallpaper has no bundled *End Times* audio track, warp pad sprites, or separate dam and tower sprites. Their timeline events use the visual cues above.
 
 ## How the Quantum Moon moves
 
@@ -92,7 +81,3 @@ The Quantum Moon starts near a randomly selected planet. It can move to another 
 3. Wallpaper Engine pauses the wallpaper, even if timed shifting is off. The Moon changes planet immediately, so it is already in its new position when playback resumes.
 
 The timer stops while the wallpaper is paused and starts a fresh interval when it resumes. Whether Wallpaper Engine pauses the wallpaper depends on its playback settings; a window covering only part of the wallpaper does not necessarily trigger a pause.
-
-## Updating an existing Wallpaper Engine project
-
-Wallpaper Engine uses its own copy of imported web wallpaper files. Make sure the project's `project.json` and `starfield.js` are both in that copy, then choose **File → Apply Wallpaper** in the editor. The **Star density (%)** slider should appear at the top of the wallpaper properties in the **Installed** tab. If the list still shows an older version, restart Wallpaper Engine's interface and reselect the wallpaper. The density control now has a fresh property key, so an older saved density value may need to be set again. Updating this repository alone does not update an installed Workshop copy; that copy needs a published wallpaper update.
