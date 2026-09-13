@@ -11,8 +11,6 @@
   const beaconOrbit = document.querySelector('.orbit--beacon');
   const beacon = document.querySelector('.outer-beacon');
   let beaconHovered = false;
-  let beaconPathOpacity = 0;
-  let previousFrameTime = null;
   beacon.addEventListener('mouseenter', () => { beaconHovered = true; });
   beacon.addEventListener('mouseleave', () => { beaconHovered = false; });
   const moonOrbits = [...document.querySelectorAll('.moon-orbit')];
@@ -53,14 +51,7 @@
     }
   }
 
-  function frame(now) {
-    const frameSeconds = previousFrameTime === null ? 0 : Math.min((now - previousFrameTime) / 1000, .1);
-    previousFrameTime = now;
-    const targetOpacity = beaconHovered ? 1 : 0;
-    const fadeStep = frameSeconds / .25;
-    beaconPathOpacity = targetOpacity > beaconPathOpacity
-      ? Math.min(targetOpacity, beaconPathOpacity + fadeStep)
-      : Math.max(targetOpacity, beaconPathOpacity - fadeStep);
+  function frame() {
     const nextWidth = canvas.clientWidth;
     const nextHeight = canvas.clientHeight;
     if (nextWidth !== width || nextHeight !== height) {
@@ -104,11 +95,11 @@
         drawOrbit(cometCenter.x, cometCenter.y, cometOrbit.offsetWidth / 2,
           cometOrbit.offsetHeight / 2, comet, opacity, trail, bounds, scale);
       }
-      if (beaconPathOpacity > 0 && opacity > 0) {
+      if (beaconHovered && opacity > 0) {
         const center = centerOf(beaconOrbit, bounds, scale);
         context.setLineDash([12, 8]);
         context.lineWidth = 1;
-        context.strokeStyle = `rgba(237, 240, 238, ${opacity * beaconPathOpacity})`;
+        context.strokeStyle = `rgba(237, 240, 238, ${opacity})`;
         context.beginPath();
         context.ellipse(center.x, center.y,
           beaconOrbit.offsetWidth / 2, beaconOrbit.offsetHeight / 2, 0, 0, Math.PI * 2);
