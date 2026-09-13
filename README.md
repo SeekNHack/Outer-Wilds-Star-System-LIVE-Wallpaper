@@ -1,16 +1,13 @@
 # Outer Wilds Solar System Wallpaper
 
-An animated web wallpaper inspired by the solar system of *Outer Wilds*. It features orbiting planets and moons, the Interloper, the Quantum Moon, The Stranger passing in front of the slowly rotating Sun, a live clock, and an optional supernova loop.
+An animated web wallpaper inspired by the solar system of *Outer Wilds*.
 
 ## Highlights
 
-- The Interloper faces the Sun and speeds up as it approaches. The White Hole Station faces the Sun too.
 - Hover over the Quantum Moon to move it to another planet. It can also vanish into a sixth, empty location, shift automatically at a configurable interval, or move when Wallpaper Engine pauses the wallpaper.
 - Moving stars come in different sizes and shades of white, blue, yellow, and orange. Their density and colors are configurable.
-- A small white satellite with a red glow orbits beyond the outermost planet. Hover over it to reveal its dashed orbit.
-- At the start of each loop, the Orbital Probe Cannon fires a glowing probe in a new random direction. The probe travels for one loop minute before fading.
-- The optional loop follows a configurable version of the 22-minute timeline: sand flows between the twins, the Sun reddens and grows, the Interloper can be swallowed, the stars fade, and the Sun collapses and explodes before the scene restarts.
-- Show or hide the loop countdown. Set **Loop · speed (%)** to `100%` for normal playback or raise it to accelerate the entire loop, including orbital motion, without changing the story's timing relative to the planets.
+- At the start of each loop, the Orbital Probe Cannon fires a glowing probe in a new random direction.
+- The loop of the 22-minute timeline is trying to be the most accurate possible.
 
 ## Wallpaper Engine settings
 
@@ -37,11 +34,7 @@ The first column identifies the corresponding option in Wallpaper Engine.
 | **Loop · show countdown** | On | On / off | Shows the time until the finale starts above the bottom-right edge, clear of the Windows taskbar. It stays still while Wallpaper Engine pauses the wallpaper and is hidden when the loop is off or the finale begins. |
 | **Loop · speed (%)** | `100%` | `100–3000%` | Sets the playback speed of the loop, orbits, and other motion. `100%` is normal speed; about `2243%` compresses a 22-minute story and its finale to one real minute. Use `?loopacceleration=2243` in a browser preview. |
 
-The small white body with a red glow circles outside the largest planetary orbit. Its dashed path appears only while the pointer is over the body and follows the configured orbit opacity, including when other orbit paths are hidden.
-
 ### Timeline by countdown at a 22-minute duration
-
-The first column shows **time remaining**, as displayed by the countdown, from 22:00 down to 0:00. Visible events scale proportionally when the loop duration changes. The Sun Station's descent begins at 10:30 on this countdown and lasts five seconds regardless of loop duration.
 
 | Countdown | Event in the wallpaper |
 | --- | --- |
@@ -60,15 +53,6 @@ The first column shows **time remaining**, as displayed by the countdown, from 2
 | 1:30 | The Stranger tilts. |
 | 1:00 | The last stars disappear completely. |
 | 0:00 | The countdown reaches zero and the red Sun begins to collapse and turn blue. |
-
-The countdown hides at 0:00. The 26-second finale continues afterward:
-
-| Time after zero | Event in the wallpaper |
-| --- | --- |
-| +5s | The Sun reaches its smallest size and holds for about 0.2 seconds. |
-| +5.2s | The blue Sun begins expanding; The Stranger is fully hidden, and shockwaves and short-lived blue and white sparks launch immediately. |
-| +23.4s | The expanding Sun and scene begin fading to black. |
-| +26s | The loop resets; the scene fades back in over 1.8 seconds. |
 
 
 ## How the Quantum Moon moves
