@@ -32,6 +32,6 @@ The Quantum Moon starts near a randomly selected planet. It can move to another 
 
 1. The mouse reaches the Moon.
 2. The configured timer elapses, if **Quantum Moon · timed shifting** is on.
-3. Wallpaper Engine resumes the wallpaper after a pause, even if timed shifting is off.
+3. Wallpaper Engine pauses the wallpaper, even if timed shifting is off. The Moon changes planet immediately, so it is already in its new position when playback resumes.
 
 The timer stops while the wallpaper is paused and starts a fresh interval when it resumes. Whether Wallpaper Engine pauses the wallpaper depends on its playback settings; a window covering only part of the wallpaper does not necessarily trigger a pause.

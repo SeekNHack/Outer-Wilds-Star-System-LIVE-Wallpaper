@@ -253,6 +253,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   height: calc(clamp(104px, 15vmin, 172px) * var(--orbit-scale, 1));
 }
 .quantum-orbit--shifting { opacity: 0; }
+.quantum-orbit--instant { transition: none; }
 .quantum-hover-target {
   position: absolute; top: 50%; left: 100%;
   width: clamp(44px, 6vmin, 70px); height: clamp(44px, 6vmin, 70px);

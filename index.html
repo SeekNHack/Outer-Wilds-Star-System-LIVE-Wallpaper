@@ -101,22 +101,42 @@
     const quantumPeriod = parseFloat(getComputedStyle(quantumOrbit).getPropertyValue('--period'));
     quantumOrbit.style.animationDelay = `${-Math.random() * quantumPeriod}s`;
     let quantumTransitioning = false;
+    let quantumShiftTimeout;
+    let quantumTransitionId = 0;
+
+    function selectNextQuantumHost() {
+      // Pick any of the other four planets, never the current one.
+      const nextOffset = 1 + Math.floor(Math.random() * (quantumHosts.length - 1));
+      currentQuantumHost = (currentQuantumHost + nextOffset) % quantumHosts.length;
+      quantumHosts[currentQuantumHost].append(quantumOrbit);
+    }
 
     function moveQuantumMoon() {
       if (quantumTransitioning) return;
       quantumTransitioning = true;
+      const transitionId = ++quantumTransitionId;
       quantumOrbit.classList.add('quantum-orbit--shifting');
-      setTimeout(() => {
-        // Pick any of the other four planets, never the current one.
-        const nextOffset = 1 + Math.floor(Math.random() * (quantumHosts.length - 1));
-        currentQuantumHost = (currentQuantumHost + nextOffset) % quantumHosts.length;
-        quantumHosts[currentQuantumHost].append(quantumOrbit);
+      quantumShiftTimeout = setTimeout(() => {
+        quantumShiftTimeout = undefined;
+        selectNextQuantumHost();
         requestAnimationFrame(() => requestAnimationFrame(() => {
+          if (transitionId !== quantumTransitionId) return;
           quantumOrbit.classList.remove('quantum-orbit--shifting');
           quantumTransitioning = false;
           syncOrbitAnimations();
         }));
       }, 350);
+    }
+
+    function moveQuantumMoonBeforePause() {
+      ++quantumTransitionId;
+      clearTimeout(quantumShiftTimeout);
+      quantumShiftTimeout = undefined;
+      quantumTransitioning = false;
+      quantumOrbit.classList.add('quantum-orbit--instant');
+      selectNextQuantumHost();
+      quantumOrbit.classList.remove('quantum-orbit--shifting');
+      syncOrbitAnimations();
     }
 
     const quantumHoverTarget = document.querySelector('.quantum-hover-target');
@@ -150,7 +170,12 @@
     window.addEventListener('wallpaper-pause-changed', event => {
       const wasPaused = wallpaperPaused;
       wallpaperPaused = event.detail;
-      if (wasPaused && !wallpaperPaused) moveQuantumMoon();
+      if (!wasPaused && wallpaperPaused) moveQuantumMoonBeforePause();
+      if (wasPaused && !wallpaperPaused) {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          quantumOrbit.classList.remove('quantum-orbit--instant');
+        }));
+      }
       updateQuantumShiftTimer();
     });
 
