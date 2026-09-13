@@ -8,7 +8,8 @@
   const STATION_FALL_SECONDS = 5;
   const PROBE_VISIBLE_SECONDS = 60;
   const PROBE_FADE_SECONDS = 1.5;
-  const RED_SUN_MAX_SCALE = 1.35;
+  // Keep the red phase only 30% larger than normal before the final collapse begins.
+  const RED_SUN_MAX_SCALE = 1.30;
   const root = document.documentElement;
   const sun = document.querySelector('.sun');
   const wallpaper = document.querySelector('.wallpaper');
