@@ -140,7 +140,10 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   transform: translate(-50%, -50%);
   pointer-events: none;
   border-radius: 50%;
-  background: radial-gradient(circle at center,
+  background: var(--background-color);
+  -webkit-mask-image: radial-gradient(circle at center,
+    #000 0%, #000 74%, rgba(0, 0, 0, .55) 90%, transparent 100%);
+  mask-image: radial-gradient(circle at center,
     #000 0%, #000 74%, rgba(0, 0, 0, .55) 90%, transparent 100%);
 }
 .stranger {
@@ -281,10 +284,9 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, .35));
 }
 
-/* A short, fading arc follows each moving body instead of showing its full orbit. */
+/* Fading arcs follow the planets, moons, binary pair, and comet. */
 .trail-mode .orbit,
 .trail-mode .moon-orbit,
-.trail-mode .sun-station-orbit,
 .trail-mode .interloper-orbit,
 .trail-mode .binary-system::before {
   border-color: transparent;
@@ -292,7 +294,6 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 }
 .trail-mode .orbit > .traveller::before,
 .trail-mode .moon-orbit::before,
-.trail-mode .sun-station-orbit::before,
 .trail-mode .interloper-orbit::before,
 .trail-mode .binary-system::before {
   content: "";
@@ -315,7 +316,6 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   padding-top: 100%;
   transform: translate(-50%, -50%);
 }
-.trail-mode .sun-station-orbit::before { inset: 10%; }
 .trail-mode .interloper-orbit::before {
   background: conic-gradient(from calc(var(--trail-angle, 0deg) + 90deg),
     var(--trail-color) 0deg, transparent .1deg,
