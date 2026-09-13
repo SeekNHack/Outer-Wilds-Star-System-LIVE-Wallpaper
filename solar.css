@@ -77,7 +77,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 .loop-countdown {
   display: none; position: absolute; z-index: 5;
   right: clamp(16px, 2.5vw, 36px);
-  bottom: clamp(14px, 2.5vh, 32px);
+  bottom: clamp(56px, 7vh, 84px);
   color: var(--orange);
   font: 800 clamp(14px, calc(var(--clock-size) * .55), 28px)/1.2 'ITC Serif Gothic', Georgia, serif;
   letter-spacing: .04em; font-variant-numeric: tabular-nums;

@@ -49,6 +49,7 @@
   let appliedSunScale = 1;
   let probeOrigin = null;
   let probeDirection = Math.random() * Math.PI * 2;
+  let probeStartSeconds = 0;
   let displayedRemainingSeconds = -1;
 
   const storyDuration = () => duration;
@@ -97,6 +98,7 @@
     appliedSunScale = 1;
     probeOrigin = null;
     probeDirection = Math.random() * Math.PI * 2;
+    probeStartSeconds = fadeIn ? RESTART_FADE_SECONDS + .5 : 0;
     probeShot.style.opacity = '0';
     displayedRemainingSeconds = -1;
     previousTime = null;
@@ -115,7 +117,8 @@
   }
 
   function renderProbe() {
-    if (elapsed >= PROBE_VISIBLE_SECONDS + PROBE_FADE_SECONDS) {
+    const flightTime = elapsed - probeStartSeconds;
+    if (flightTime < 0 || flightTime >= PROBE_VISIBLE_SECONDS + PROBE_FADE_SECONDS) {
       probeShot.style.opacity = '0';
       return;
     }
@@ -130,12 +133,12 @@
       };
     }
     // Keep the launch speed throughout the minute, even after leaving the screen.
-    const distance = 65 * elapsed / .85;
+    const distance = 65 * flightTime / .85;
     const x = probeOrigin.x + probeOrigin.dx * distance;
     const y = probeOrigin.y + probeOrigin.dy * distance;
     probeShot.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
-    probeShot.style.opacity = String(clamp01(elapsed / .12) *
-      (1 - clamp01((elapsed - PROBE_VISIBLE_SECONDS) / PROBE_FADE_SECONDS)));
+    probeShot.style.opacity = String(clamp01(flightTime / .12) *
+      (1 - clamp01((flightTime - PROBE_VISIBLE_SECONDS) / PROBE_FADE_SECONDS)));
   }
 
   function render() {
@@ -144,7 +147,8 @@
     const storyTime = Math.min(elapsed, storyDuration());
     const passed = seconds => storyTime >= at(seconds);
     root.classList.toggle('loop-active', true);
-    root.classList.toggle('loop-probe-firing', elapsed < 1.2);
+    root.classList.toggle('loop-probe-firing',
+      elapsed >= probeStartSeconds && elapsed < probeStartSeconds + 1.2);
     renderProbe();
     root.classList.toggle('loop-sand-flowing',
       passed(milestones.sandStart) && storyTime < at(milestones.sandStop) - SAND_FADE_SECONDS);

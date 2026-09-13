@@ -40,12 +40,14 @@ The small white body with a red glow circles outside the largest planetary orbit
 | **Quantum Moon · seconds between shifts** | `30s` | `1–120s` | Sets the interval between periodic shifts. This setting appears only when timed shifting is on. |
 | **Loop** | On | On / off | Recreates a timed stellar collapse and supernova sequence. Off keeps the wallpaper's continuous animation. |
 | **Loop · duration (minutes)** | `22 min` | `1–60 min` | Scales every story timestamp proportionally. This setting appears only when the loop is on. |
-| **Loop · show countdown** | On | On / off | Shows the time until the finale starts in the bottom-right corner, using a smaller version of the clock font. It stays still while Wallpaper Engine pauses the wallpaper and is hidden when the loop is off or the finale begins. |
+| **Loop · show countdown** | On | On / off | Shows the time until the finale starts above the bottom-right edge, clear of the Windows taskbar. It stays still while Wallpaper Engine pauses the wallpaper and is hidden when the loop is off or the finale begins. |
 | **Loop · speed (%)** | `100%` | `100–3000%` | Sets the playback speed of the loop, orbits, and other motion. `100%` is normal speed; about `2243%` compresses a 22-minute story and its finale to one real minute. Use `?loopacceleration=2243` in a browser preview. |
 
 ## Optional loop
 
 The loop starts when enabled. The Sun slowly grows by at most 35% and reddens, while stars gradually fade until the sky is empty at End Times. The Stranger's eclipse mask follows the Sun's size and closes as the Sun turns blue. At 11:30 in a 22-minute loop, the Sun Station begins spiraling inward and fades as it enters the Sun. When the configured duration expires, that same Sun begins a 26-second finale: it collapses over five seconds, holds its tiny blue remnant for about 0.2 seconds, then expands for about 20 seconds at a constant speed. Faint shockwaves accompany the expansion. The planets, orbit paths, and clock fade away behind it. As the Sun fades, the whole wallpaper turns black before the next cycle fades in over 1.8 seconds. Wallpaper Engine pauses the loop clock when it pauses the wallpaper. Changing the duration keeps the current percentage of the story or the current point in the finale. Turning the loop off immediately resets the Sun and scene to their normal appearance; turning it back on starts a new loop from zero.
+
+On subsequent cycles, the Orbital Probe Cannon fires about 2.3 loop seconds after the reset, just after the scene's fade-in. On the first load it fires immediately.
 
 ### Timeline at a 22-minute duration
 
