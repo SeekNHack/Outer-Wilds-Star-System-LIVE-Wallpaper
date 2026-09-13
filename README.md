@@ -27,8 +27,6 @@ The first column identifies the corresponding option in Wallpaper Engine.
 | **Background · colored stars** | On | On / off | Switches between mixed white, blue, yellow, and orange stars and an all-white starfield. |
 | **Orbits · appearance** | Full orbit | Full orbit, Fading trail, Hidden | Shows complete paths, fading trails, or no paths. Celestial bodies keep moving when paths are hidden. |
 | **Orbits · opacity (%)** | `36%` | `0–100%` | Controls the visibility of orbit paths and trails. |
-
-The small white body with a red glow circles outside the largest planetary orbit. Its dashed path appears only while the pointer is over the body and follows the configured orbit opacity, including when other orbit paths are hidden.
 | **Motion · overall speed (%)** | `100%` | `25–300%` | Changes the speed of orbiting bodies, the Interloper, and The Stranger. It does not change the Quantum Moon's timer interval. |
 | **Size · entire star system (%)** | `82%` | `50–150%` | Scales the whole star system. |
 | **Clock · font size (px)** | `42px` | `24–100px` | Changes the clock's font size. |
@@ -43,39 +41,45 @@ The small white body with a red glow circles outside the largest planetary orbit
 | **Loop · show countdown** | On | On / off | Shows the time until the finale starts above the bottom-right edge, clear of the Windows taskbar. It stays still while Wallpaper Engine pauses the wallpaper and is hidden when the loop is off or the finale begins. |
 | **Loop · speed (%)** | `100%` | `100–3000%` | Sets the playback speed of the loop, orbits, and other motion. `100%` is normal speed; about `2243%` compresses a 22-minute story and its finale to one real minute. Use `?loopacceleration=2243` in a browser preview. |
 
+The small white body with a red glow circles outside the largest planetary orbit. Its dashed path appears only while the pointer is over the body and follows the configured orbit opacity, including when other orbit paths are hidden.
+
 ## Optional loop
 
-The loop starts when enabled. The Sun slowly grows by at most 35% and reddens, while stars gradually fade until the sky is empty at End Times. The Stranger's eclipse mask follows the Sun's size and closes as the Sun turns blue. At 11:30 in a 22-minute loop, the Sun Station begins spiraling inward and fades as it enters the Sun. When the configured duration expires, that same Sun begins a 26-second finale: it collapses over five seconds, holds its tiny blue remnant for about 0.2 seconds, then expands for about 20 seconds at a constant speed. Faint shockwaves accompany the expansion. The planets, orbit paths, and clock fade away behind it. As the Sun fades, the whole wallpaper turns black before the next cycle fades in over 1.8 seconds. Wallpaper Engine pauses the loop clock when it pauses the wallpaper. Changing the duration keeps the current percentage of the story or the current point in the finale. Turning the loop off immediately resets the Sun and scene to their normal appearance; turning it back on starts a new loop from zero.
+The loop starts when enabled. The Sun slowly grows by at most 35% and reddens, while stars gradually fade until the sky is empty at End Times. The Stranger's eclipse mask follows the Sun's size and closes as the Sun turns blue. With 10:30 remaining on a 22-minute countdown, the Sun Station begins spiraling inward and fades as it enters the Sun. When the configured duration expires, that same Sun begins a 26-second finale: it collapses over five seconds, holds its tiny blue remnant for about 0.2 seconds, then expands for about 20 seconds at a constant speed. Faint shockwaves accompany the expansion. The planets, orbit paths, and clock fade away behind it. As the Sun fades, the whole wallpaper turns black before the next cycle fades in over 1.8 seconds. Wallpaper Engine pauses the loop clock when it pauses the wallpaper. Changing the duration keeps the current percentage of the story or the current point in the finale. Turning the loop off immediately resets the Sun and scene to their normal appearance; turning it back on starts a new loop from zero.
 
 On subsequent cycles, the Orbital Probe Cannon fires about 2.3 loop seconds after the reset, just after the scene's fade-in. On the first load it fires immediately.
 
-### Timeline at a 22-minute duration
+### Timeline by countdown at a 22-minute duration
 
-Times below are elapsed time from the start of a loop. At a 22-minute setting, the story milestones keep their exact timestamps and the finale begins at 22:00. Its 26-second animation runs after the configured time. Other durations scale story milestones proportionally; in a one-minute test, the Interloper can be swallowed from about 0:55 and the finale begins at 1:00.
+The first column shows **time remaining**, as displayed by the countdown, from 22:00 down to 0:00. Story milestones scale proportionally when the loop duration changes. The Sun Station's descent begins at 10:30 on this countdown and lasts five seconds regardless of loop duration.
 
-The Sun Station's fall starts at the scaled story time and lasts five seconds: around 5:14 in a 10-minute loop or 11:30 in a 22-minute loop.
-
-| Time | Event in the wallpaper |
+| Countdown | Event in the wallpaper |
 | --- | --- |
-| 0:00 | The Orbital Probe Cannon fires with a brief yellow-orange explosion; its glowing probe travels in a random direction chosen for this loop. |
-| 1:00 | The probe begins fading after one minute of flight. |
-| 2:00 | Sand starts flowing between the Hourglass Twins. |
-| 5:15 | Sun Station warp pad becomes accessible in the story; no separate warp effect is shown. |
-| 6:40 | The Stranger opens its sails, shown by a brighter glow. |
-| 7:50 | Ash Twin warp pad becomes accessible in the story; no separate warp effect is shown. |
-| 11:30 | The Sun Station starts spiraling inward while continuing to orbit the Sun. |
-| 11:35 | The Sun Station finishes entering the Sun and has faded away. |
-| 13:00 | The Stranger's dam breaks, marked by a slight brightening. |
-| 20:00 | The Interloper can be swallowed from this point, when its icy head first enters the visible Sun. It then fades out. |
-| 20:18.5 | The sand flow begins its 1.5-second fade-out. |
-| 20:20 | The sand flow has completely stopped. |
-| 20:30 | The Stranger tilts as the Island Tower falls. |
-| 20:35 | End Times begins; the stars have fully disappeared. |
-| 22:00 | The countdown reaches zero and the red Sun begins to collapse and turn blue. |
-| 22:05 | The Sun reaches its smallest size and holds for about 0.2 seconds. |
-| 22:05.2 | The blue Sun begins expanding; The Stranger is fully hidden, and shockwaves and short-lived blue and white sparks launch immediately. |
-| 22:23.4 | The expanding Sun and scene begin fading to black. |
-| 22:26 | The loop resets; the scene fades back in over 1.8 seconds. |
+| 22:00 | The loop and countdown begin. On the first cycle, the Orbital Probe Cannon fires immediately with a yellow-orange explosion and sends a glowing probe in a random direction. |
+| About 21:58 | On later cycles, the cannon fires just after the scene fades back in. |
+| About 21:00 | The probe begins fading after one minute of flight, or about 20:58 on later cycles. |
+| 20:00 | Sand starts flowing between the Hourglass Twins. |
+| 16:45 | Sun Station warp pad becomes accessible in the story; no separate warp effect is shown. |
+| 15:20 | The Stranger opens its sails, shown by a brighter glow. |
+| 14:10 | Ash Twin warp pad becomes accessible in the story; no separate warp effect is shown. |
+| 10:30 | The Sun Station starts spiraling inward while continuing to orbit the Sun. |
+| 10:25 | The Sun Station finishes entering the Sun and has faded away. |
+| 9:00 | The Stranger's dam breaks, marked by a slight brightening. |
+| 2:00 | The Interloper can be swallowed from this point, when its icy head first enters the visible Sun. It then fades out. |
+| 1:42 | The sand flow begins its 1.5-second fade-out. |
+| 1:40 | The sand flow has completely stopped. |
+| 1:30 | The Stranger tilts as the Island Tower falls. |
+| 1:25 | End Times begins; the stars have fully disappeared. |
+| 0:00 | The countdown reaches zero and the red Sun begins to collapse and turn blue. |
+
+The countdown hides at 0:00. The 26-second finale continues afterward:
+
+| Time after zero | Event in the wallpaper |
+| --- | --- |
+| +5s | The Sun reaches its smallest size and holds for about 0.2 seconds. |
+| +5.2s | The blue Sun begins expanding; The Stranger is fully hidden, and shockwaves and short-lived blue and white sparks launch immediately. |
+| +23.4s | The expanding Sun and scene begin fading to black. |
+| +26s | The loop resets; the scene fades back in over 1.8 seconds. |
 
 The wallpaper has no bundled *End Times* audio track, warp pad sprites, or separate dam and tower sprites. Their timeline events use the visual cues above.
 

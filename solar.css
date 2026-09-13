@@ -139,14 +139,15 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   pointer-events: none;
 }
 .outer-beacon::before {
-  z-index: 1; width: 6px; height: 6px;
+  z-index: 1; width: 4px; height: 4px;
   background: #fff;
-  box-shadow: 0 0 4px 1px #fff, 0 0 10px 4px rgba(255, 92, 92, .95);
+  box-shadow: 0 0 3px .5px #fff, 0 0 10px 4px rgba(255, 92, 92, .95);
 }
 .outer-beacon::after {
   width: 32px; height: 32px;
   background: radial-gradient(circle, rgba(255, 68, 68, .78) 0%, rgba(224, 22, 37, .42) 33%, transparent 72%);
   filter: blur(3px);
+  animation: beacon-glow 5s ease-in-out infinite;
 }
 
 .sun-glow {
@@ -491,6 +492,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 @keyframes moon-orbit { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 @keyframes sun-pulse { from { filter: brightness(.95); } to { filter: brightness(1.14); } }
 @keyframes sun-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes beacon-glow { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
 @keyframes probe-fire {
   0% { opacity: 0; transform: translate(-50%, -50%) scale(.25); }
   7% { opacity: 1; transform: translate(-50%, -50%) scale(.6); }
