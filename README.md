@@ -30,7 +30,6 @@ The first column identifies the corresponding option in Wallpaper Engine.
 | **Quantum Moon · timed shifting** | On | On / off | Enables or disables only the Moon's periodic shifts. |
 | **Quantum Moon · seconds between shifts** | `30s` | `1–120s` | Sets the interval between periodic shifts. This setting appears only when timed shifting is on. |
 | **Loop** | On | On / off | Recreates a timed stellar collapse and supernova sequence. Off keeps the wallpaper's continuous animation. |
-| **Loop · duration (minutes)** | `22 min` | `1–60 min` | Scales every story timestamp proportionally. This setting appears only when the loop is on. |
 | **Loop · show countdown** | On | On / off | Shows the time until the finale starts above the bottom-right edge, clear of the Windows taskbar. It stays still while Wallpaper Engine pauses the wallpaper and is hidden when the loop is off or the finale begins. |
 | **Loop · speed (%)** | `100%` | `100–3000%` | Sets the playback speed of the loop, orbits, and other motion. `100%` is normal speed; about `2243%` compresses a 22-minute story and its finale to one real minute. Use `?loopacceleration=2243` in a browser preview. |
 
