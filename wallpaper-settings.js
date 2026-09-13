@@ -35,6 +35,11 @@ window.wallpaperPropertyListener = {
         }
         continue;
       }
+      if (key === 'coloredstars') {
+        const enabled = property.value === true || property.value === 1 || property.value === '1' || property.value === 'true';
+        window.dispatchEvent(new CustomEvent('wallpaper-star-colors-changed', { detail: enabled }));
+        continue;
+      }
       if (key === 'skycolor') {
         const channels = String(property.value).trim().split(/\s+/).map(Number);
         if (channels.length === 3 && channels.every(Number.isFinite)) {
@@ -47,14 +52,7 @@ window.wallpaperPropertyListener = {
       const value = Number(property.value);
       if (!Number.isFinite(value)) continue;
       if (key === 'starsamount') {
-        const far = document.querySelector('.stars--far');
-        const near = document.querySelector('.stars--near');
-        far.style.display = near.style.display = value === 0 ? 'none' : 'block';
-        if (value > 0) {
-          const spacing = Math.sqrt(100 / value);
-          document.documentElement.style.setProperty('--far-star-size', `${390 * spacing}px ${287 * spacing}px`);
-          document.documentElement.style.setProperty('--near-star-size', `${610 * spacing}px ${349 * spacing}px`);
-        }
+        window.dispatchEvent(new CustomEvent('wallpaper-star-density-changed', { detail: value }));
       } else if (key === 'pathopacity') {
         document.documentElement.style.setProperty('--orbit-opacity', String(value / 100));
       } else if (key === 'motionspeed' && value > 0) {

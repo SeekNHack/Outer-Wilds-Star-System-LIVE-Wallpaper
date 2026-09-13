@@ -18,8 +18,14 @@
         "max": 300,
         "editable": true
       },
-      "orbitstyle": {
+      "coloredstars": {
         "order": 2,
+        "text": "Background · colored stars",
+        "type": "bool",
+        "value": true
+      },
+      "orbitstyle": {
+        "order": 3,
         "text": "Orbits · appearance",
         "type": "combo",
         "value": "full",
@@ -39,7 +45,7 @@
         ]
       },
       "pathopacity": {
-        "order": 3,
+        "order": 4,
         "text": "Orbits · opacity (%)",
         "type": "slider",
         "value": 36,
@@ -48,7 +54,7 @@
         "editable": true
       },
       "motionspeed": {
-        "order": 4,
+        "order": 5,
         "text": "Motion · overall speed (%)",
         "type": "slider",
         "value": 100,
@@ -57,7 +63,7 @@
         "editable": true
       },
       "fullsystemscale": {
-        "order": 5,
+        "order": 6,
         "text": "Size · entire star system (%)",
         "type": "slider",
         "value": 82,
@@ -66,7 +72,7 @@
         "editable": true
       },
       "clocksize": {
-        "order": 6,
+        "order": 7,
         "text": "Clock · font size (px)",
         "type": "slider",
         "value": 42,
@@ -75,25 +81,25 @@
         "editable": true
       },
       "clocktop": {
-        "order": 7,
+        "order": 8,
         "text": "Clock · top (e.g. 2.5% or 30px)",
         "type": "textinput",
         "value": "2.5%"
       },
       "clockleft": {
-        "order": 8,
+        "order": 9,
         "text": "Clock · left (e.g. 50% or 300px)",
         "type": "textinput",
         "value": "50%"
       },
       "strangerenabled": {
-        "order": 9,
+        "order": 10,
         "text": "The Stranger · show",
         "type": "bool",
         "value": true
       },
       "strangerspeed": {
-        "order": 10,
+        "order": 11,
         "condition": "strangerenabled.value == true",
         "text": "The Stranger · speed (%)",
         "type": "slider",
@@ -103,13 +109,13 @@
         "editable": true
       },
       "quantumautoshift": {
-        "order": 11,
+        "order": 12,
         "text": "Quantum Moon · timed shifting",
         "type": "bool",
         "value": true
       },
       "quantumshiftseconds": {
-        "order": 12,
+        "order": 13,
         "condition": "quantumautoshift.value == true",
         "text": "Quantum Moon · seconds between shifts",
         "type": "slider",

@@ -1,10 +1,10 @@
 # Outer Wilds Solar System Wallpaper
 
-An animated web wallpaper inspired by the solar system of *Outer Wilds*. It features orbiting planets and moons, the Interloper, the Quantum Moon, The Stranger passing in front of the Sun, and a live clock.
+An animated web wallpaper inspired by the solar system of *Outer Wilds*. It features orbiting planets and moons, the Interloper, the Quantum Moon, The Stranger passing in front of the slowly rotating Sun, and a live clock.
 
 ## Getting started
 
-Load `index.html` as a web wallpaper in Wallpaper Engine. Keep `project.json`, `solar.css`, `wallpaper-settings.js`, and the `assets/` directory alongside it. The settings below are defined in `project.json` and appear in Wallpaper Engine's wallpaper properties panel.
+Load `index.html` as a web wallpaper in Wallpaper Engine. Keep `project.json`, `solar.css`, `starfield.js`, `wallpaper-settings.js`, and the `assets/` directory alongside it. The settings below are defined in `project.json` and appear in Wallpaper Engine's wallpaper properties panel.
 
 ## Wallpaper Engine settings
 
@@ -13,7 +13,8 @@ The first column identifies the corresponding option in Wallpaper Engine.
 | Setting | Default | Range or choices | What it does |
 | --- | --- | --- | --- |
 | **Background · color** | `#030405` | Any color | Changes the background color. |
-| **Background · star density (%)** | `100%` | `0–300%` | Adjusts star density; `0%` hides the stars. |
+| **Background · star density (%)** | `100%` | `0–300%` | Sets the number of moving stars relative to the screen area. At `100%`, there are about 220 stars per million screen pixels; `0%` hides them. |
+| **Background · colored stars** | On | On / off | Switches between mixed white, blue, yellow, and orange stars and an all-white starfield. |
 | **Orbits · appearance** | Full orbit | Full orbit, Fading trail, Hidden | Shows complete paths, fading trails, or no paths. Celestial bodies keep moving when paths are hidden. |
 | **Orbits · opacity (%)** | `36%` | `0–100%` | Controls the visibility of orbit paths and trails. |
 | **Motion · overall speed (%)** | `100%` | `25–300%` | Changes the speed of orbiting bodies, the Interloper, and The Stranger. It does not change the Quantum Moon's timer interval. |

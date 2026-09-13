@@ -10,8 +10,7 @@
 </head>
 <body>
   <main class="wallpaper" aria-label="Sistema solare animato di Outer Wilds">
-    <div class="stars stars--far" aria-hidden="true"></div>
-    <div class="stars stars--near" aria-hidden="true"></div>
+    <canvas id="starfield" class="starfield" aria-hidden="true"></canvas>
 
     <header class="clock" aria-label="Ora corrente">
       <time id="time" class="clock__time">--:--</time>
@@ -19,7 +18,7 @@
 
     <div class="solar-system" aria-hidden="true">
       <div class="sun-glow"></div>
-      <img class="sun" src="./assets/Sun.png" alt="" draggable="false">
+      <div class="sun"><img class="sun__image" src="./assets/Sun.png" alt="" draggable="false"></div>
       <div class="stranger-wrap">
         <div class="stranger-motion">
           <div class="stranger-shadow"></div>
@@ -314,6 +313,7 @@
     }
     requestAnimationFrame(animateInterloper);
   </script>
+  <script src="./starfield.js"></script>
   <script src="./wallpaper-settings.js"></script>
 </body>
 </html>
