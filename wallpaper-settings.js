@@ -51,7 +51,7 @@ window.wallpaperPropertyListener = {
 
       const value = Number(property.value);
       if (!Number.isFinite(value)) continue;
-      if (key === 'starsamount') {
+      if (key === 'stardensity' || key === 'starsamount') {
         window.dispatchEvent(new CustomEvent('wallpaper-star-density-changed', { detail: value }));
       } else if (key === 'pathopacity') {
         document.documentElement.style.setProperty('--orbit-opacity', String(value / 100));

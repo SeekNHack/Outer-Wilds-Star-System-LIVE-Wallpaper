@@ -13,7 +13,7 @@ The first column identifies the corresponding option in Wallpaper Engine.
 | Setting | Default | Range or choices | What it does |
 | --- | --- | --- | --- |
 | **Background · color** | `#030405` | Any color | Changes the background color. |
-| **Background · star density (%)** | `100%` | `0–300%` | Sets the number of moving stars relative to the screen area. At `100%`, there are about 220 stars per million screen pixels; `0%` hides them. |
+| **Star density (%)** | `100%` | `0–300%` | Sets the number of moving stars relative to the screen area. At `100%`, there are about 220 stars per million screen pixels; `0%` hides them. |
 | **Background · colored stars** | On | On / off | Switches between mixed white, blue, yellow, and orange stars and an all-white starfield. |
 | **Orbits · appearance** | Full orbit | Full orbit, Fading trail, Hidden | Shows complete paths, fading trails, or no paths. Celestial bodies keep moving when paths are hidden. |
 | **Orbits · opacity (%)** | `36%` | `0–100%` | Controls the visibility of orbit paths and trails. |
@@ -36,3 +36,7 @@ The Quantum Moon starts near a randomly selected planet. It can move to another 
 3. Wallpaper Engine pauses the wallpaper, even if timed shifting is off. The Moon changes planet immediately, so it is already in its new position when playback resumes.
 
 The timer stops while the wallpaper is paused and starts a fresh interval when it resumes. Whether Wallpaper Engine pauses the wallpaper depends on its playback settings; a window covering only part of the wallpaper does not necessarily trigger a pause.
+
+## Updating an existing Wallpaper Engine project
+
+Wallpaper Engine uses its own copy of imported web wallpaper files. Make sure the project's `project.json` and `starfield.js` are both in that copy, then choose **File → Apply Wallpaper** in the editor. The **Star density (%)** slider should appear at the top of the wallpaper properties in the **Installed** tab. If the list still shows an older version, restart Wallpaper Engine's interface and reselect the wallpaper. The density control now has a fresh property key, so an older saved density value may need to be set again. Updating this repository alone does not update an installed Workshop copy; that copy needs a published wallpaper update.

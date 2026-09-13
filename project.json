@@ -4,14 +4,14 @@
   "general": {
     "properties": {
       "skycolor": {
-        "order": 0,
+        "order": 1,
         "text": "Background · color",
         "type": "color",
         "value": "0.011765 0.015686 0.019608"
       },
-      "starsamount": {
-        "order": 1,
-        "text": "Background · star density (%)",
+      "stardensity": {
+        "order": 0,
+        "text": "Star density (%)",
         "type": "slider",
         "value": 100,
         "min": 0,
