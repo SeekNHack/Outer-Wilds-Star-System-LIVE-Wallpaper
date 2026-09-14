@@ -228,9 +228,11 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  -webkit-mask-image: radial-gradient(circle calc(var(--system-size) * .079 * var(--loop-sun-scale, 1)) at center,
+  /* Sun.png is opaque only to about 46.5% of its 14%-wide box. Keep the
+     shadow inside that visible disk, including while the red Sun grows. */
+  -webkit-mask-image: radial-gradient(circle calc(var(--system-size) * .065 * var(--object-scale, 1) * var(--loop-sun-scale, 1)) at center,
     #000 0%, #000 67%, rgba(0, 0, 0, .7) 82%, transparent 100%);
-  mask-image: radial-gradient(circle calc(var(--system-size) * .079 * var(--loop-sun-scale, 1)) at center,
+  mask-image: radial-gradient(circle calc(var(--system-size) * .065 * var(--object-scale, 1) * var(--loop-sun-scale, 1)) at center,
     #000 0%, #000 67%, rgba(0, 0, 0, .7) 82%, transparent 100%);
 }
 .stranger-motion {
