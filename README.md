@@ -8,7 +8,7 @@ An animated web wallpaper inspired by the solar system of *Outer Wilds*.
 - Moving stars come in different sizes and shades of white, blue, yellow, and orange. Their density and colors are configurable.
 - At the start of each loop, the Orbital Probe Cannon aims in a new random direction, stays intact briefly, then breaks as it fires a glowing probe. Both cannon images keep facing the shot as they orbit.
 - Timber Hearth, Brittle Hollow, Giant's Deep, and Dark Bramble rotate slowly as they orbit.
-- Hollow's Lantern launches its first meteorite toward Brittle Hollow 15 seconds into a 22-minute loop, or about 45 seconds after the hour in hourly mode. Later launches average about one per minute, rising to about three per minute near the end; some arrive in pairs. They can be switched off.
+- Hollow's Lantern launches its first meteorite toward Brittle Hollow 15 seconds into a 22-minute loop, or about 45 seconds after the hour in hourly mode. After five impacts, Brittle Hollow reveals its hole until the next loop. Later launches average about one per minute, rising to about three per minute near the end; some arrive in pairs. They can be switched off.
 - Red lightning briefly lights up different parts of Giant's Deep about eight times per minute, even when the loop is off. It can be switched off separately.
 - The game's 22-minute sequence can run at its usual length or scale proportionally across a 60-minute hourly cycle.
 

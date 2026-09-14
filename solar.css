@@ -333,6 +333,15 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 .loop-tower-fallen .stranger { transform: translate(-50%, -50%) rotate(9deg); }
 .planet--timber { --size: clamp(32px, 5.2vmin, 55px); }
 .planet--brittle { --size: clamp(33px, 5.3vmin, 61px); }
+.brittle-image {
+  position: absolute; top: 50%; left: 50%;
+  width: 100%; height: 100%; object-fit: contain;
+  transform: translate(-50%, -50%);
+  transition: opacity .65s ease-in-out;
+}
+.brittle-image--hole { width: 96%; height: 96%; opacity: 0; }
+.planet--brittle-holed .brittle-image--intact { opacity: 0; }
+.planet--brittle-holed .brittle-image--hole { opacity: 1; }
 .planet--giants { --size: clamp(42px, 7vmin, 75px); }
 .planet--timber { --spin-period: 210s; }
 .planet--brittle { --spin-period: 240s; }

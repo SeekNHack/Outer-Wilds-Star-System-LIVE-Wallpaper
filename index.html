@@ -54,7 +54,10 @@
 
       <div class="orbit orbit--brittle">
         <div class="traveller traveller--brittle">
-          <img class="planet planet--brittle" src="./assets/Brittle_Hollow.png" alt="" draggable="false">
+          <span class="planet planet--brittle">
+            <img class="brittle-image brittle-image--intact" src="./assets/Brittle_Hollow.png" alt="" draggable="false">
+            <img class="brittle-image brittle-image--hole" src="./assets/Brittle_Hollow_Hole.png" alt="" draggable="false">
+          </span>
           <span class="moon-orbit moon-orbit--brittle"><img class="moon moon--hollow-lantern" src="./assets/Hollows_Lantern.png" alt="" draggable="false"></span>
         </div>
       </div>
@@ -505,6 +508,8 @@
     const meteoriteLayer = document.getElementById('meteorite-layer');
     const lantern = document.querySelector('.moon--hollow-lantern');
     const brittlePlanet = document.querySelector('.planet--brittle');
+    const hitsUntilBrittleHole = 5;
+    let brittleMeteorHits = 0;
     let meteorLateStart = 17 * 60;
     let meteorLoopEnd = 22 * 60;
     let firstMeteorTime = 15;
@@ -543,6 +548,8 @@
     window.addEventListener('wallpaper-loop-reset', () => {
       meteorStoryTime = 0;
       meteorNeedsInitialization = true;
+      brittleMeteorHits = 0;
+      brittlePlanet.classList.remove('planet--brittle-holed');
       resetMeteorSchedule();
     });
     window.addEventListener('wallpaper-loop-story-duration', event => {
@@ -637,6 +644,9 @@
         };
       }
       function showImpact() {
+        if (++brittleMeteorHits === hitsUntilBrittleHole) {
+          brittlePlanet.classList.add('planet--brittle-holed');
+        }
         const impact = document.createElement('span');
         impact.className = 'meteor-impact';
         meteoriteLayer.appendChild(impact);
