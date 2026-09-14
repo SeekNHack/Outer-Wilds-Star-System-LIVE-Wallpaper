@@ -23,6 +23,11 @@ window.wallpaperPropertyListener = {
         document.documentElement.classList.toggle('stranger-disabled', !enabled);
         continue;
       }
+      if (key === 'strangershadowonly') {
+        const enabled = property.value === true || property.value === 1 || property.value === '1' || property.value === 'true';
+        document.documentElement.classList.toggle('stranger-shadow-only', enabled);
+        continue;
+      }
       if (key === 'quantumautoshift') {
         const enabled = property.value === true || property.value === 1 || property.value === '1' || property.value === 'true';
         window.dispatchEvent(new CustomEvent('wallpaper-quantum-auto-shift-changed', { detail: enabled }));

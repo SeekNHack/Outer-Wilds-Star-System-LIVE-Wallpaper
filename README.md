@@ -4,7 +4,7 @@ An animated web wallpaper inspired by the solar system of *Outer Wilds*.
 
 ## Highlights
 
-- Hover over the Quantum Moon to move it to another planet. It can also vanish into a sixth, empty location, shift automatically at a configurable interval, or move when Wallpaper Engine pauses the wallpaper.
+- Hover over the Quantum Moon to move it to another planet. It can also vanish into a sixth, empty location, shift automatically at a configurable interval, or move when the wallpaper host pauses the wallpaper.
 - Moving stars come in different sizes and shades of white, blue, yellow, and orange. Their density and colors are configurable.
 - At the start of each loop, the Orbital Probe Cannon fires a glowing probe in a new random direction.
 - Timber Hearth, Brittle Hollow, Giant's Deep, and Dark Bramble rotate slowly as they orbit.
@@ -12,14 +12,14 @@ An animated web wallpaper inspired by the solar system of *Outer Wilds*.
 - Red lightning briefly lights up different parts of Giant's Deep about eight times per minute, even when the loop is off. It can be switched off separately.
 - The loop of the 22-minute timeline is trying to be the most accurate possible.
 
-## Wallpaper Engine settings
+## Wallpaper Engine and Lively settings
 
-The first column identifies the corresponding option in Wallpaper Engine.
+Both Wallpaper Engine and Lively expose the settings below. The first column names the option in either app. In Lively, right-click the wallpaper in the library and select **Customise**. Lively shows dependent controls even when their parent toggle is off; their descriptions say when they apply.
 
 | Setting | Default | Range or choices | What it does |
 | --- | --- | --- | --- |
 | **Background · color** | `#030405` | Any color | Changes the background color. |
-| **Star density (%)** | `100%` | `0–300%` | Sets the number of moving stars relative to the screen area. At `100%`, there are about 220 stars per million screen pixels; `0%` hides them. |
+| **Star density (%)** | `200%` | `0–300%` | Sets the number of moving stars relative to the screen area. At `100%`, there are about 220 stars per million screen pixels; `0%` hides them. |
 | **Background · colored stars** | On | On / off | Switches between mixed white, blue, yellow, and orange stars and an all-white starfield. |
 | **Orbits · appearance** | Full orbit | Full orbit, Fading trail, Hidden | Shows complete paths, fading trails, or no paths. Celestial bodies keep moving when paths are hidden. |
 | **Orbits · opacity (%)** | `36%` | `0–100%` | Controls the visibility of orbit paths and trails. |
@@ -28,15 +28,22 @@ The first column identifies the corresponding option in Wallpaper Engine.
 | **Clock · font size (px)** | `42px` | `24–100px` | Changes the clock's font size. |
 | **Clock · top** | `2.5%` | CSS position, such as `30px` | Sets the clock's distance from the top edge. |
 | **Clock · left** | `50%` | CSS position, such as `300px` | Positions the clock by its horizontal center; `50%` centers it on screen. |
-| **The Stranger · show** | On | On / off | Shows or hides The Stranger and its eclipse of the Sun. |
+| **The Stranger · show** | On | On / off | Shows The Stranger and its eclipse. Off hides both the image and shadow. |
+| **The Stranger · shadow only** | Off | On / off | Hides The Stranger's PNG while keeping its moving shadow and eclipse. Available when **The Stranger · show** is on. |
 | **The Stranger · speed (%)** | `50%` | `10–200%` | Sets The Stranger's speed relative to the overall speed. At `100%` overall speed, `50%` makes one orbit take about 120 seconds instead of 60. This setting appears only when The Stranger is shown. |
 | **Quantum Moon · timed shifting** | On | On / off | Enables or disables only the Moon's periodic shifts. |
 | **Quantum Moon · seconds between shifts** | `30s` | `1–120s` | Sets the interval between periodic shifts. This setting appears only when timed shifting is on. |
 | **Loop** | On | On / off | Recreates a timed stellar collapse and supernova sequence. Off keeps the wallpaper's continuous animation. |
-| **Loop · show countdown** | On | On / off | Shows the time until the finale starts above the bottom-right edge, clear of the Windows taskbar. It stays still while Wallpaper Engine pauses the wallpaper and is hidden when the loop is off or the finale begins. |
+| **Loop · show countdown** | On | On / off | Shows the time until the finale starts above the bottom-right edge, clear of the Windows taskbar. It stays still while the wallpaper host pauses the wallpaper and is hidden when the loop is off or the finale begins. |
 | **Loop · speed (%)** | `100%` | `100–3000%` | Sets the playback speed of the loop, orbits, and other motion. `100%` is normal speed; about `2243%` compresses a 22-minute story and its finale to one real minute. Use `?loopacceleration=2243` in a browser preview. |
 | **Loop · Hollow's Lantern meteorites** | On | On / off | Enables the meteorites that hit Brittle Hollow while the loop runs. They average about one per minute until the final five minutes, then about three per minute. |
 | **Giant's Deep · red lightning** | On | On / off | Enables brief red lightning inside Giant's Deep, averaging eight flashes per real minute. |
+
+### Install in Lively Wallpaper
+
+Make a ZIP with `LivelyInfo.json`, `LivelyProperties.json`, `index.html`, the scripts, styles, and `assets/` at the ZIP root, then drag the ZIP into Lively. `LivelyInfo.json` points Lively to `index.html` and enables playback pause events. `LivelyProperties.json` creates the **Customise** controls; Lively saves their values per display. The Wallpaper Engine project and Workshop ID remain separate in `project.json`.
+
+If you change a default in `LivelyProperties.json` after importing, use **Restore Default** in Lively's Customise menu to replace Lively's saved copy. Opening `index.html` directly in a browser does not provide Lively's settings or pause events; use a local HTTP server for browser preview.
 
 ### Timeline by countdown at a 22-minute duration
 
@@ -67,6 +74,6 @@ The Quantum Moon starts near a randomly selected planet. It can move to another 
 
 1. The mouse reaches the Moon when it is visible.
 2. The configured timer elapses, if **Quantum Moon · timed shifting** is on.
-3. Wallpaper Engine pauses the wallpaper, even if timed shifting is off. The Moon changes planet immediately, so it is already in its new position when playback resumes.
+3. Wallpaper Engine or Lively pauses the wallpaper, even if timed shifting is off. The Moon changes planet immediately, so it is already in its new position when playback resumes.
 
-The timer stops while the wallpaper is paused and starts a fresh interval when it resumes. Whether Wallpaper Engine pauses the wallpaper depends on its playback settings; a window covering only part of the wallpaper does not necessarily trigger a pause.
+The timer stops while the wallpaper is paused and starts a fresh interval when it resumes. Whether the host pauses the wallpaper depends on its playback settings; a window covering only part of the wallpaper does not necessarily trigger a pause.

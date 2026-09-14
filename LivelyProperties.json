@@ -1,0 +1,133 @@
+{
+  "stardensity": {
+    "text": "Star density (%)",
+    "type": "slider",
+    "value": 200,
+    "min": 0,
+    "max": 300,
+    "step": 1
+  },
+  "skycolor": {
+    "text": "Background · color",
+    "type": "color",
+    "value": "#030405"
+  },
+  "coloredstars": {
+    "text": "Background · colored stars",
+    "type": "checkbox",
+    "value": true
+  },
+  "orbitstyle": {
+    "text": "Orbits · appearance",
+    "type": "dropdown",
+    "value": 0,
+    "items": ["Full orbit", "Fading trail", "Hidden"]
+  },
+  "pathopacity": {
+    "text": "Orbits · opacity (%)",
+    "type": "slider",
+    "value": 36,
+    "min": 0,
+    "max": 100,
+    "step": 1
+  },
+  "motionspeed": {
+    "text": "Motion · overall speed (%)",
+    "type": "slider",
+    "value": 100,
+    "min": 25,
+    "max": 300,
+    "step": 1
+  },
+  "fullsystemscale": {
+    "text": "Size · entire star system (%)",
+    "type": "slider",
+    "value": 82,
+    "min": 50,
+    "max": 150,
+    "step": 1
+  },
+  "clocksize": {
+    "text": "Clock · font size (px)",
+    "type": "slider",
+    "value": 42,
+    "min": 24,
+    "max": 100,
+    "step": 1
+  },
+  "clocktop": {
+    "text": "Clock · top (e.g. 2.5% or 30px)",
+    "type": "textbox",
+    "value": "2.5%"
+  },
+  "clockleft": {
+    "text": "Clock · left (e.g. 50% or 300px)",
+    "type": "textbox",
+    "value": "50%"
+  },
+  "strangerenabled": {
+    "text": "The Stranger · show",
+    "type": "checkbox",
+    "value": true
+  },
+  "strangershadowonly": {
+    "text": "The Stranger · shadow only",
+    "type": "checkbox",
+    "value": false,
+    "help": "Used only while The Stranger is shown."
+  },
+  "strangerspeed": {
+    "text": "The Stranger · speed (%)",
+    "type": "slider",
+    "value": 50,
+    "min": 10,
+    "max": 200,
+    "step": 1,
+    "help": "Used only while The Stranger is shown."
+  },
+  "quantumautoshift": {
+    "text": "Quantum Moon · timed shifting",
+    "type": "checkbox",
+    "value": true
+  },
+  "quantumshiftseconds": {
+    "text": "Quantum Moon · seconds between shifts",
+    "type": "slider",
+    "value": 30,
+    "min": 1,
+    "max": 120,
+    "step": 1,
+    "help": "Used only when timed shifting is enabled."
+  },
+  "loopenabled": {
+    "text": "Loop",
+    "type": "checkbox",
+    "value": true
+  },
+  "loopcountdown": {
+    "text": "Loop · show countdown",
+    "type": "checkbox",
+    "value": true,
+    "help": "Used only when the loop is enabled."
+  },
+  "loopacceleration": {
+    "text": "Loop · speed (%)",
+    "type": "slider",
+    "value": 100,
+    "min": 100,
+    "max": 3000,
+    "step": 1,
+    "help": "100% is normal speed; used only when the loop is enabled."
+  },
+  "meteoritesenabled": {
+    "text": "Loop · Hollow's Lantern meteorites",
+    "type": "checkbox",
+    "value": true,
+    "help": "Used only when the loop is enabled."
+  },
+  "giantslightningenabled": {
+    "text": "Giant's Deep · red lightning",
+    "type": "checkbox",
+    "value": true
+  }
+}

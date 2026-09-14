@@ -271,6 +271,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 }
 .stranger-disabled .stranger-wrap { display: none; }
 .stranger-disabled .sun { -webkit-mask-image: none; mask-image: none; }
+.stranger-shadow-only .stranger { display: none; }
 .sun-station-orbit {
   position: absolute; z-index: 1; top: 50%; left: 50%;
   width: calc(19% * var(--orbit-scale, 1)); height: calc(19% * var(--orbit-scale, 1));

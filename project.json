@@ -98,8 +98,15 @@
         "type": "bool",
         "value": true
       },
-      "strangerspeed": {
+      "strangershadowonly": {
         "order": 11,
+        "condition": "strangerenabled.value == true",
+        "text": "The Stranger · shadow only",
+        "type": "bool",
+        "value": false
+      },
+      "strangerspeed": {
+        "order": 12,
         "condition": "strangerenabled.value == true",
         "text": "The Stranger · speed (%)",
         "type": "slider",
@@ -109,13 +116,13 @@
         "editable": true
       },
       "quantumautoshift": {
-        "order": 12,
+        "order": 13,
         "text": "Quantum Moon · timed shifting",
         "type": "bool",
         "value": true
       },
       "quantumshiftseconds": {
-        "order": 13,
+        "order": 14,
         "condition": "quantumautoshift.value == true",
         "text": "Quantum Moon · seconds between shifts",
         "type": "slider",
@@ -125,20 +132,20 @@
         "editable": true
       },
       "loopenabled": {
-        "order": 14,
+        "order": 15,
         "text": "Loop",
         "type": "bool",
         "value": true
       },
       "loopcountdown": {
-        "order": 15,
+        "order": 16,
         "condition": "loopenabled.value == true",
         "text": "Loop · show countdown",
         "type": "bool",
         "value": true
       },
       "loopacceleration": {
-        "order": 17,
+        "order": 18,
         "condition": "loopenabled.value == true",
         "text": "Loop · speed (%)",
         "type": "slider",
@@ -148,14 +155,14 @@
         "editable": true
       },
       "meteoritesenabled": {
-        "order": 18,
+        "order": 19,
         "condition": "loopenabled.value == true",
         "text": "Loop · Hollow's Lantern meteorites",
         "type": "bool",
         "value": true
       },
       "giantslightningenabled": {
-        "order": 19,
+        "order": 20,
         "text": "Giant's Deep · red lightning",
         "type": "bool",
         "value": true

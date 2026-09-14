@@ -1,0 +1,14 @@
+{
+  "AppVersion": "2.0.0.0",
+  "Title": "Outer Wilds Star System Live Wallpaper",
+  "Thumbnail": "preview.jpg",
+  "Preview": null,
+  "Desc": "Animated Outer Wilds-inspired solar system with a configurable supernova loop.",
+  "Author": "",
+  "License": "",
+  "Contact": "",
+  "Type": 1,
+  "FileName": "index.html",
+  "Arguments": "--pause-event true",
+  "IsAbsolutePath": false
+}
