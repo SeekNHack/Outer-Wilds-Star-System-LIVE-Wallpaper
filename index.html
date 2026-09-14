@@ -78,6 +78,7 @@
       </div>
 
       <div class="interloper-orbit"></div>
+      <span id="interloper-beam" class="interloper-beam" aria-hidden="true"></span>
       <img id="interloper" class="interloper" src="./assets/interloper.png" alt="" draggable="false">
       <img class="white-hole" src="./assets/White_Hole.png" alt="" draggable="false">
     </div>
@@ -213,6 +214,7 @@
     }
 
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const interloperBeam = document.getElementById('interloper-beam');
     const strangerOrbits = [[.62, .98], [.72, 1.08], [.84, 1.18]];
     function chooseStrangerOrbit() {
       const [radiusX, radiusY] = strangerOrbits[Math.floor(Math.random() * strangerOrbits.length)];
@@ -233,7 +235,7 @@
     // in equal time without leaving its orbit.
     let orbitDuration = 180000;
     // Calibrated so the first Sun crossing after the 2:00 gate is near 1:59.
-    const cometStartProgress = .958;
+    let cometStartProgress = .958;
     let cometProgress = cometStartProgress;
     let previousFrameTime = null;
     let cometCollisionArmed = false;
@@ -263,7 +265,33 @@
         length: distances[orbitSamples] };
     }
     measureCometPath();
-    window.addEventListener('resize', measureCometPath);
+    function calibrateCometStart() {
+      if (!cometPath || !sun.offsetWidth) return;
+      const sunX = sun.offsetLeft, sunY = sun.offsetTop;
+      const radius = sun.offsetWidth * .47, head = interloper.offsetWidth * .38;
+      let best = { phase: cometStartProgress, error: Infinity };
+      for (let candidate = 0; candidate < 1; candidate += .005) {
+        let phase = candidate, wasInside = false, impact = null;
+        for (let t = 0; t <= 1202; t += 2) {
+          const angle = angleAtDistance(phase * cometPath.length);
+          const x = cometPath.centerX + cometPath.radiusX * Math.cos(angle);
+          const y = cometPath.centerY + cometPath.radiusY * Math.sin(angle);
+          const distance = Math.hypot(sunX - x, sunY - y);
+          const red = Math.min(1, t / 1320);
+          const scale = 1 + .35 * red * red * (3 - 2 * red);
+          const inside = distance - head <= radius * scale;
+          if (t >= 1200 && inside && !wasInside) { impact = t; break; }
+          const boost = 1 + Math.max(0, 1 - distance / (radius * 1.8)) * 3;
+          phase = (phase + 2 / 180 * boost) % 1;
+          wasInside = inside;
+        }
+        if (impact !== null && Math.abs(impact - 1201) < best.error) best = { phase: candidate, error: Math.abs(impact - 1201) };
+      }
+      cometStartProgress = best.phase;
+      cometProgress = cometStartProgress;
+    }
+    calibrateCometStart();
+    window.addEventListener('resize', () => { measureCometPath(); calibrateCometStart(); });
     function syncStrangerAnimation() {
       system.getAnimations().forEach(animation => {
         if (animation.animationName === 'stranger-orbit') {
@@ -300,6 +328,7 @@
       cometSwallowed = false;
       cometWasInsideSun = false;
       interloper.classList.remove('interloper--swallowed');
+      interloperBeam.style.opacity = '';
       cometProgress = cometStartProgress;
       previousFrameTime = null;
       document.querySelectorAll('.solar-system, .traveller, .binary-system, .moon-orbit, .quantum-orbit, .sun-station-orbit, .sun__image')
@@ -363,6 +392,7 @@
       ) * 180 / Math.PI;
       const visualAngle = targetAngle + 180;
       interloper.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) rotate(${visualAngle}deg) scale(var(--object-scale, 1))`;
+      interloperBeam.style.transform = `translate3d(${x}px, ${y}px, 0) translate(0, -50%) rotate(${visualAngle}deg)`;
       const sunScale = parseFloat(document.documentElement.style.getPropertyValue('--loop-sun-scale')) || 1;
       // The sprite's icy head points toward the Sun; detect its first contact
       // with the visible disc rather than waiting for the sprite's center.
@@ -372,6 +402,7 @@
       if (cometCollisionArmed && !cometSwallowed && cometInsideSun && !cometWasInsideSun) {
         cometSwallowed = true;
         interloper.classList.add('interloper--swallowed');
+        interloperBeam.style.opacity = '0';
       }
       cometWasInsideSun = cometInsideSun;
 

@@ -56,6 +56,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 .loop-finale .orbit,
 .loop-finale .interloper-orbit,
 .loop-finale .interloper:not(.interloper--swallowed),
+.loop-finale .interloper-beam,
 .loop-finale .white-hole { opacity: var(--loop-world-opacity, 1); }
 .loop-finale .stranger-wrap { opacity: var(--loop-stranger-opacity, 1); }
 
@@ -416,7 +417,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   border-radius: 50%;
 }
 .interloper {
-  position: absolute; z-index: 0;
+  position: absolute; z-index: 2;
   left: 0;
   top: 0;
   width: clamp(12px, 2.8vmin, 32px); height: auto;
@@ -424,7 +425,31 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   filter: drop-shadow(0 0 5px rgba(83, 192, 215, .4));
   will-change: left, top, transform;
 }
+.interloper-beam {
+  position: absolute; z-index: 1;
+  left: 0; top: 0;
+  width: clamp(85px, 16vmin, 210px); height: clamp(10px, 2vmin, 24px);
+  transform: translate3d(-100px, -100px, 0);
+  transform-origin: 0 50%;
+  clip-path: polygon(0 0, 0 100%, 100% 50%);
+  background: radial-gradient(ellipse at 0 50%, rgba(244, 255, 255, .98) 0%, rgba(117, 223, 255, .7) 23%, rgba(69, 187, 255, .25) 67%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 13%, rgba(0, 0, 0, .75) 42%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, #000 13%, rgba(0, 0, 0, .75) 42%, transparent 100%);
+  filter: blur(6px);
+  opacity: .78;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  will-change: transform;
+}
+.interloper-beam::after {
+  content: ""; position: absolute; inset: 20% 0;
+  clip-path: polygon(0 0, 0 100%, 100% 50%);
+  background: radial-gradient(ellipse at 0 50%, rgba(255, 255, 255, .8), rgba(130, 224, 255, .28) 42%, transparent 100%);
+  filter: blur(5px);
+  mix-blend-mode: screen;
+}
 .loop-active .interloper { transition: opacity .5s ease; }
+.loop-active .interloper-beam { transition: opacity .5s ease; }
 .interloper--swallowed { opacity: 0; }
 .white-hole {
   position: absolute; z-index: 3;
