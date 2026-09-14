@@ -4,7 +4,7 @@ const livelyPropertyNames = new Set([
   'stardensity', 'skycolor', 'coloredstars', 'orbitstyle', 'pathopacity',
   'motionspeed', 'fullsystemscale', 'clocksize', 'clocktop', 'clockleft',
   'strangerenabled', 'strangershadowonly', 'strangerspeed',
-  'quantumautoshift', 'quantumshiftseconds', 'loopenabled', 'loopcountdown',
+  'quantumautoshift', 'quantumshiftseconds', 'loopenabled', 'looptriggermode', 'loopcountdown',
   'loopacceleration', 'meteoritesenabled', 'giantslightningenabled'
 ]);
 
@@ -13,6 +13,9 @@ window.livelyPropertyListener = function livelyPropertyListener(name, value) {
 
   if (name === 'orbitstyle') {
     value = ['full', 'trail', 'hidden'][value];
+    if (!value) return;
+  } else if (name === 'looptriggermode') {
+    value = ['timer', 'hour'][value];
     if (!value) return;
   } else if (name === 'skycolor') {
     if (typeof value !== 'string' || !/^#[0-9a-fA-F]{6}$/.test(value)) return;

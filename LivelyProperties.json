@@ -104,6 +104,13 @@
     "type": "checkbox",
     "value": true
   },
+  "looptriggermode": {
+    "text": "Loop · supernova trigger",
+    "type": "dropdown",
+    "value": 0,
+    "items": ["After 22 minutes", "At the exact hour"],
+    "help": "The exact-hour mode ends its story at the next local full hour."
+  },
   "loopcountdown": {
     "text": "Loop · show countdown",
     "type": "checkbox",

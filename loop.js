@@ -2,6 +2,7 @@
 // run afterward, so the countdown reaches zero when the Sun begins collapsing.
 (() => {
   const ORIGINAL_SECONDS = 22 * 60;
+  const HOURLY_SECONDS = 60 * 60;
   const FINALE_SECONDS = 26;
   const RESTART_FADE_SECONDS = 1.8;
   const SAND_FADE_SECONDS = 1.5;
@@ -34,12 +35,13 @@
     endTimes: 1235
   };
   let enabled = true;
+  let triggerMode = 'timer';
+  let triggerModeSetByHost = false;
   let accelerationPercent = hasAccelerationParam ? accelerationParam : 100;
   let accelerationSetByWallpaperEngine = false;
   let paused = false;
-  // The loop is fixed at 22 minutes; only the acceleration speed is user-adjustable.
-  let duration = 22 * 60;
-  let durationSetByWallpaperEngine = false;
+  // The story occupies either 22 minutes or the entire hour before :00.
+  let duration = ORIGINAL_SECONDS;
   let elapsed = 0;
   let previousTime = null;
   let frameId = null;
@@ -50,10 +52,13 @@
   let probeDirection = Math.random() * Math.PI * 2;
   let probeStartSeconds = 0;
   let displayedRemainingSeconds = -1;
+  let hourTarget = null;
+  let hourRemainingSeconds = 0;
+  let restartStartedAt = 0;
 
   const storyDuration = () => duration;
   const at = seconds => seconds / ORIGINAL_SECONDS * duration;
-  const timeScale = () => enabled ? accelerationPercent / 100 : 1;
+  const timeScale = () => enabled && triggerMode === 'timer' ? accelerationPercent / 100 : 1;
   const syncTimeScale = () => window.dispatchEvent(new CustomEvent(
     'wallpaper-time-scale-changed', { detail: timeScale() }
   ));
@@ -66,6 +71,21 @@
   const fastThenSlow = value => 1 - Math.pow(1 - clamp01(value), 3);
   // Start gently, then accelerate into the final collapse.
   const slowThenFast = value => Math.pow(clamp01(value), 3);
+
+  function hourlySchedule(now) {
+    // The story advances with the local clock and ends at every full hour.
+    // During the 26-second finale, the target remains the hour just reached.
+    const hourStart = new Date(now);
+    hourStart.setMinutes(0, 0, 0);
+    let target = hourStart.getTime();
+    if (now >= target + FINALE_SECONDS * 1000) target += 60 * 60 * 1000;
+    const remaining = (target - now) / 1000;
+    return {
+      target,
+      remaining,
+      elapsed: duration - remaining
+    };
+  }
 
   function clearEffects() {
     root.classList.remove(
@@ -87,27 +107,43 @@
     root.style.removeProperty('--loop-station-opacity');
     root.style.removeProperty('--loop-world-opacity');
     root.style.removeProperty('--loop-cover-opacity');
+    root.style.removeProperty('--loop-sand-fade-duration');
     window.dispatchEvent(new CustomEvent('wallpaper-loop-star-visibility', { detail: 1 }));
   }
 
   function resetScene(fadeIn = false) {
     elapsed = 0;
     restarting = fadeIn;
+    restartStartedAt = Date.now();
+    hourTarget = null;
+    hourRemainingSeconds = 0;
     finaleBaseDiameter = null;
     appliedSunScale = 1;
     probeOrigin = null;
     probeDirection = Math.random() * Math.PI * 2;
-    probeStartSeconds = fadeIn ? RESTART_FADE_SECONDS + .5 : 0;
+    probeStartSeconds = fadeIn
+      ? triggerMode === 'hour'
+        ? FINALE_SECONDS + RESTART_FADE_SECONDS + .5
+        : RESTART_FADE_SECONDS + .5
+      : 0;
     probeShot.style.opacity = '0';
     displayedRemainingSeconds = -1;
     previousTime = null;
     clearEffects();
+    root.style.setProperty('--loop-sand-fade-duration', `${at(SAND_FADE_SECONDS)}s`);
+    if (fadeIn) {
+      root.classList.add('loop-restarting');
+      root.style.setProperty('--loop-cover-opacity', '1');
+    }
     root.classList.toggle('loop-disabled', !enabled);
     window.dispatchEvent(new Event('wallpaper-loop-reset'));
+    window.dispatchEvent(new CustomEvent('wallpaper-loop-story-duration', { detail: duration }));
   }
 
   function updateCountdown() {
-    const remaining = Math.max(0, Math.ceil(duration - elapsed));
+    const remaining = triggerMode === 'hour'
+      ? Math.max(0, Math.ceil(hourRemainingSeconds))
+      : Math.max(0, Math.ceil(duration - elapsed));
     if (remaining === displayedRemainingSeconds) return;
     displayedRemainingSeconds = remaining;
     const minutes = Math.floor(remaining / 60);
@@ -151,9 +187,9 @@
       elapsed >= probeStartSeconds && elapsed < probeStartSeconds + 1.2);
     renderProbe();
     root.classList.toggle('loop-sand-flowing',
-      passed(milestones.sandStart) && storyTime < at(milestones.sandStop) - SAND_FADE_SECONDS);
+      passed(milestones.sandStart) && storyTime < at(milestones.sandStop - SAND_FADE_SECONDS));
     const stationFallStart = at(milestones.stationDestroyed);
-    const stationFall = clamp01((storyTime - stationFallStart) / STATION_FALL_SECONDS);
+    const stationFall = clamp01((storyTime - stationFallStart) / at(STATION_FALL_SECONDS));
     root.style.setProperty('--loop-station-left', `${90 - 40 * smooth(stationFall)}%`);
     root.style.setProperty('--loop-station-opacity', String(1 - smooth((stationFall - .65) / .35)));
     root.classList.toggle('loop-sails-open', passed(milestones.sailsOpen));
@@ -163,7 +199,10 @@
     root.classList.toggle('loop-finale', finale);
     root.classList.toggle('loop-blackout', finale);
     if (restarting) {
-      const cover = 1 - smooth(elapsed / RESTART_FADE_SECONDS);
+      const restartElapsed = triggerMode === 'hour'
+        ? (Date.now() - restartStartedAt) / 1000
+        : elapsed;
+      const cover = 1 - smooth(restartElapsed / RESTART_FADE_SECONDS);
       root.classList.toggle('loop-restarting', cover > 0);
       root.style.setProperty('--loop-cover-opacity', String(cover));
       if (cover <= 0) restarting = false;
@@ -221,22 +260,51 @@
   function tick(now) {
     frameId = null;
     if (!enabled) return;
-    if (previousTime !== null && !paused) {
-      elapsed += Math.max(0, Math.min(now - previousTime, 1000)) / 1000 * timeScale();
+    if (triggerMode === 'hour') {
+      if (!paused) {
+        const schedule = hourlySchedule(Date.now());
+        if (hourTarget !== null && hourTarget !== schedule.target) resetScene(true);
+        hourTarget = schedule.target;
+        hourRemainingSeconds = schedule.remaining;
+        elapsed = schedule.elapsed;
+      }
+    } else {
+      if (previousTime !== null && !paused) {
+        elapsed += Math.max(0, Math.min(now - previousTime, 1000)) / 1000 * timeScale();
+      }
+      if (elapsed >= duration + FINALE_SECONDS) resetScene(true);
     }
     previousTime = now;
-    if (elapsed >= duration + FINALE_SECONDS) resetScene(true);
     render();
     frameId = requestAnimationFrame(tick);
+  }
+
+  function initializeHourlyScene() {
+    const schedule = hourlySchedule(Date.now());
+    hourTarget = schedule.target;
+    hourRemainingSeconds = schedule.remaining;
+    elapsed = schedule.elapsed;
+    render();
   }
 
   window.addEventListener('wallpaper-loop-enabled-changed', event => {
     const nextEnabled = Boolean(event.detail);
     if (enabled === nextEnabled) return;
     enabled = nextEnabled;
-    resetScene();
+    resetScene(enabled && triggerMode === 'hour');
+    if (enabled && triggerMode === 'hour') initializeHourlyScene();
     syncTimeScale();
     if (enabled && frameId === null) frameId = requestAnimationFrame(tick);
+  });
+  window.addEventListener('wallpaper-loop-trigger-mode-changed', event => {
+    if (event.detail !== 'timer' && event.detail !== 'hour') return;
+    triggerModeSetByHost = true;
+    if (triggerMode === event.detail) return;
+    triggerMode = event.detail;
+    duration = triggerMode === 'hour' ? HOURLY_SECONDS : ORIGINAL_SECONDS;
+    resetScene(triggerMode === 'hour');
+    if (triggerMode === 'hour' && enabled) initializeHourlyScene();
+    syncTimeScale();
   });
   window.addEventListener('wallpaper-loop-acceleration-changed', event => {
     const percent = Number(event.detail);
@@ -261,6 +329,10 @@
         return response.json();
       })
       .then(project => {
+        if (!triggerModeSetByHost) {
+          const mode = project.general?.properties?.looptriggermode;
+          if (mode) window.wallpaperPropertyListener.applyUserProperties({ looptriggermode: mode });
+        }
         if (previewCountdown === null) {
           const countdown = project.general?.properties?.loopcountdown;
           if (countdown) window.wallpaperPropertyListener.applyUserProperties({ loopcountdown: countdown });

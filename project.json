@@ -137,8 +137,25 @@
         "type": "bool",
         "value": true
       },
-      "loopcountdown": {
+      "looptriggermode": {
         "order": 16,
+        "condition": "loopenabled.value == true",
+        "text": "Loop · supernova trigger",
+        "type": "combo",
+        "value": "timer",
+        "options": [
+          {
+            "label": "After 22 minutes",
+            "value": "timer"
+          },
+          {
+            "label": "At the exact hour",
+            "value": "hour"
+          }
+        ]
+      },
+      "loopcountdown": {
+        "order": 17,
         "condition": "loopenabled.value == true",
         "text": "Loop · show countdown",
         "type": "bool",

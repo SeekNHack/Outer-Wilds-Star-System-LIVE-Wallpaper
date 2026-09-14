@@ -38,6 +38,12 @@ window.wallpaperPropertyListener = {
         window.dispatchEvent(new CustomEvent('wallpaper-loop-enabled-changed', { detail: enabled }));
         continue;
       }
+      if (key === 'looptriggermode') {
+        if (property.value === 'timer' || property.value === 'hour') {
+          window.dispatchEvent(new CustomEvent('wallpaper-loop-trigger-mode-changed', { detail: property.value }));
+        }
+        continue;
+      }
       if (key === 'meteoritesenabled' || key === 'giantslightningenabled') {
         const enabled = property.value === true || property.value === 1 || property.value === '1' || property.value === 'true';
         const eventName = key === 'meteoritesenabled'

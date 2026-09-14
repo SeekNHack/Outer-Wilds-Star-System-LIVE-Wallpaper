@@ -243,6 +243,7 @@
     let cometCollisionArmed = false;
     let loopStoryElapsed = 0;
     let cometTimelineActive = false;
+    let cometStoryDuration = 22 * 60;
     let cometTimeline = [];
     let cometRephase = null;
     let cometSwallowed = false;
@@ -331,24 +332,26 @@
         }
       }
       if (contactPhase === null) return;
-      // Integrate backwards from the first physical entry at 1:59 remaining.
+      // Match the original 1:59 contact fraction at either story length.
+      const contactTime = cometStoryDuration * 1201 / 1320;
+      const armTime = cometStoryDuration * 1200 / 1320;
       let phase = contactPhase;
-      for (let t = 1201; t > 0; t -= cometTimelineStep) {
+      for (let t = contactTime; t > 0; t -= cometTimelineStep) {
         const step = Math.min(cometTimelineStep, t);
         phase = advanceCometPhase(phase, -step);
       }
       cometStartProgress = wrapCometPhase(phase);
       cometTimeline = [cometStartProgress];
       phase = cometStartProgress;
-      for (let t = cometTimelineStep; t <= 1350; t += cometTimelineStep) {
+      for (let t = cometTimelineStep; t <= cometStoryDuration + 30; t += cometTimelineStep) {
         phase = advanceCometPhase(phase, cometTimelineStep);
         cometTimeline.push(phase);
       }
       cometRephase = null;
-      if (cometTimelineActive && loopStoryElapsed < 1200) {
+      if (cometTimelineActive && loopStoryElapsed < armTime) {
         const newPhase = wrapCometPhase(rawCometPhaseAtStoryTime(loopStoryElapsed));
         const offset = ((previousPhase - newPhase + 1.5) % 1) - .5;
-        const duration = Math.min(90, Math.max(0, 1200 - loopStoryElapsed - 3));
+        const duration = Math.min(90, Math.max(0, armTime - loopStoryElapsed - 3));
         if (duration > 0 && Math.abs(offset) > .0001) {
           cometRephase = { start: loopStoryElapsed, duration, offset };
         }
@@ -362,6 +365,12 @@
     window.addEventListener('wallpaper-loop-time', event => {
       loopStoryElapsed = Math.max(0, Number(event.detail) || 0);
       cometTimelineActive = true;
+    });
+    window.addEventListener('wallpaper-loop-story-duration', event => {
+      const nextDuration = Number(event.detail);
+      if (!Number.isFinite(nextDuration) || nextDuration <= 0 || nextDuration === cometStoryDuration) return;
+      cometStoryDuration = nextDuration;
+      calibrateCometStart();
     });
     function syncStrangerAnimation() {
       system.getAnimations().forEach(animation => {
@@ -402,6 +411,7 @@
       loopStoryElapsed = 0;
       cometRephase = null;
       interloper.classList.remove('interloper--swallowed');
+      interloperOrbit.classList.remove('interloper-orbit--swallowed');
       interloperBeam.style.opacity = '';
       cometProgress = cometStartProgress;
       previousFrameTime = null;
@@ -478,6 +488,7 @@
       if (cometCollisionArmed && !cometSwallowed && cometInsideSun) {
         cometSwallowed = true;
         interloper.classList.add('interloper--swallowed');
+        interloperOrbit.classList.add('interloper-orbit--swallowed');
         interloperBeam.style.opacity = '0';
       }
 
@@ -488,8 +499,9 @@
     const meteoriteLayer = document.getElementById('meteorite-layer');
     const lantern = document.querySelector('.moon--hollow-lantern');
     const brittlePlanet = document.querySelector('.planet--brittle');
-    const meteorLateStart = 17 * 60;
-    const meteorLoopEnd = 22 * 60;
+    let meteorLateStart = 17 * 60;
+    let meteorLoopEnd = 22 * 60;
+    let firstMeteorTime = 15;
     let meteorLoopEnabled = true;
     let meteorUserEnabled = true;
     let meteorStoryTime = 0;
@@ -499,6 +511,7 @@
     let nextMeteorTime = null;
     let pairedMeteorTime = null;
     let meteorGeneration = 0;
+    let meteorNeedsInitialization = true;
     // One or two per burst: a 25% chance of a pair gives 1.25 meteors on
     // average. Intervals average 75s early and 25s late: ~1/min and ~3/min.
     const meteorDelay = late => late
@@ -509,8 +522,8 @@
       meteoriteLayer.replaceChildren();
       meteorLatePhase = storyTime >= meteorLateStart;
       meteorFinaleStarted = false;
-      firstMeteorPending = storyTime < 15;
-      nextMeteorTime = firstMeteorPending ? 15 : storyTime + meteorDelay(meteorLatePhase);
+      firstMeteorPending = storyTime < firstMeteorTime;
+      nextMeteorTime = firstMeteorPending ? firstMeteorTime : storyTime + meteorDelay(meteorLatePhase);
       pairedMeteorTime = null;
     }
     window.addEventListener('wallpaper-loop-enabled-changed', event => {
@@ -523,12 +536,26 @@
     });
     window.addEventListener('wallpaper-loop-reset', () => {
       meteorStoryTime = 0;
+      meteorNeedsInitialization = true;
       resetMeteorSchedule();
+    });
+    window.addEventListener('wallpaper-loop-story-duration', event => {
+      const nextDuration = Number(event.detail);
+      if (!Number.isFinite(nextDuration) || nextDuration <= 0) return;
+      meteorLoopEnd = nextDuration;
+      meteorLateStart = nextDuration * 17 / 22;
+      firstMeteorTime = nextDuration > 22 * 60 ? 45 : 15;
+      meteorNeedsInitialization = true;
+      resetMeteorSchedule(meteorStoryTime);
     });
     window.addEventListener('wallpaper-loop-time', event => {
       const storyTime = Number(event.detail);
       if (!Number.isFinite(storyTime)) return;
       meteorStoryTime = storyTime;
+      if (meteorNeedsInitialization) {
+        meteorNeedsInitialization = false;
+        resetMeteorSchedule(storyTime);
+      }
       if (!meteorLoopEnabled || !meteorUserEnabled || wallpaperPaused) return;
       if (storyTime >= meteorLoopEnd) {
         if (!meteorFinaleStarted) {

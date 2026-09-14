@@ -8,9 +8,9 @@ An animated web wallpaper inspired by the solar system of *Outer Wilds*.
 - Moving stars come in different sizes and shades of white, blue, yellow, and orange. Their density and colors are configurable.
 - At the start of each loop, the Orbital Probe Cannon fires a glowing probe in a new random direction.
 - Timber Hearth, Brittle Hollow, Giant's Deep, and Dark Bramble rotate slowly as they orbit.
-- Hollow's Lantern launches its first meteorite toward Brittle Hollow 15 seconds into the loop. Later launches average about one per minute, rising to about three per minute during the final five minutes; some arrive in pairs. They can be switched off.
+- Hollow's Lantern launches its first meteorite toward Brittle Hollow 15 seconds into a 22-minute loop, or about 45 seconds after the hour in hourly mode. Later launches average about one per minute, rising to about three per minute near the end; some arrive in pairs. They can be switched off.
 - Red lightning briefly lights up different parts of Giant's Deep about eight times per minute, even when the loop is off. It can be switched off separately.
-- The loop of the 22-minute timeline is trying to be the most accurate possible.
+- The game's 22-minute sequence can run at its usual length or scale proportionally across a 60-minute hourly cycle.
 
 ## Wallpaper Engine and Lively settings
 
@@ -34,18 +34,23 @@ Both Wallpaper Engine and Lively expose the settings below. The first column nam
 | **Quantum Moon · timed shifting** | On | On / off | Enables or disables only the Moon's periodic shifts. |
 | **Quantum Moon · seconds between shifts** | `30s` | `1–120s` | Sets the interval between periodic shifts. This setting appears only when timed shifting is on. |
 | **Loop** | On | On / off | Recreates a timed stellar collapse and supernova sequence. Off keeps the wallpaper's continuous animation. |
-| **Loop · show countdown** | On | On / off | Shows the time until the finale starts above the bottom-right edge, clear of the Windows taskbar. It stays still while the wallpaper host pauses the wallpaper and is hidden when the loop is off or the finale begins. |
-| **Loop · speed (%)** | `100%` | `100–3000%` | Sets the playback speed of the loop, orbits, and other motion. `100%` is normal speed; about `2243%` compresses a 22-minute story and its finale to one real minute. Use `?loopacceleration=2243` in a browser preview. |
-| **Loop · Hollow's Lantern meteorites** | On | On / off | Enables the meteorites that hit Brittle Hollow while the loop runs. They average about one per minute until the final five minutes, then about three per minute. |
+| **Loop · supernova trigger** | After 22 minutes | After 22 minutes, At the exact hour | Chooses a repeating 22-minute timer or a 60-minute story whose supernova begins at every local full hour (`HH:00`). Opening the wallpaper partway through an hour initializes the scene at that point in the story. |
+| **Loop · show countdown** | On | On / off | Shows the time until the finale starts above the bottom-right edge, clear of the Windows taskbar. Hourly mode counts down to the next full hour. It stays still while the wallpaper host pauses the wallpaper and is hidden when the loop is off or the finale begins. |
+| **Loop · speed (%)** | `100%` | `100–3000%` | In 22-minute timer mode, sets the playback speed of the loop, orbits, and other motion. `100%` is normal speed; about `2243%` compresses a 22-minute story and its finale to one real minute. Use `?loopacceleration=2243` in a browser preview. Hourly mode follows the clock and ignores this setting. |
+| **Loop · Hollow's Lantern meteorites** | On | On / off | Enables the meteorites that hit Brittle Hollow while the loop runs. They average about one per minute until the final five minutes in timer mode or the final `13:38` in hourly mode, then about three per minute. |
 | **Giant's Deep · red lightning** | On | On / off | Enables brief red lightning inside Giant's Deep, averaging eight flashes per real minute. |
 
 ### Install in Lively Wallpaper
 
-Make a ZIP with `LivelyInfo.json`, `LivelyProperties.json`, `index.html`, the scripts, styles, and `assets/` at the ZIP root, then drag the ZIP into Lively. `LivelyInfo.json` points Lively to `index.html` and enables playback pause events. `LivelyProperties.json` creates the **Customise** controls; Lively saves their values per display. The Wallpaper Engine project and Workshop ID remain separate in `project.json`.
+Add `index.html` as a local web wallpaper in Lively. Lively creates its own `LivelyInfo.json` in the imported wallpaper's library folder; this project does not include one. `LivelyProperties.json` creates the **Customise** controls, and Lively saves their values per display. The Wallpaper Engine project and Workshop ID remain separate in `project.json`.
+
+To make the Quantum Moon shift when Lively pauses the wallpaper, set `"Arguments": "--pause-event true"` in the `LivelyInfo.json` generated for that imported wallpaper, then reload it. Lively sends pause events only when this argument is enabled; the other settings work without it.
 
 If you change a default in `LivelyProperties.json` after importing, use **Restore Default** in Lively's Customise menu to replace Lively's saved copy. Opening `index.html` directly in a browser does not provide Lively's settings or pause events; use a local HTTP server for browser preview.
 
-### Timeline by countdown at a 22-minute duration
+### Timeline by countdown
+
+The table below shows the 22-minute timer mode. **At the exact hour** scales story milestones across 60 minutes, from one full hour to the next. For example, sand starts about `54:33` before the next hour, the Sun Station begins falling at `28:38`, the Interloper is armed at `5:27` and enters the Sun at about `5:25`, and the last stars vanish at `2:44`. If the wallpaper opens halfway through the hour, these milestones and the countdown are calculated immediately from the current local time. The 26-second supernova finale still begins exactly at `HH:00`.
 
 | Countdown | Event in the wallpaper |
 | --- | --- |
@@ -67,6 +72,23 @@ If you change a default in `LivelyProperties.json` after importing, use **Restor
 | 1:00 | The last stars disappear completely. |
 | 0:00 | The countdown reaches zero and the red Sun begins to collapse and turn blue. |
 
+In hourly mode, the same events occur at these local clock times (rounded to the nearest second):
+
+| Clock time | Countdown | Event |
+| --- | --- | --- |
+| `HH:00:28` | 59:32 | The cannon fires after the previous supernova and scene fade. |
+| `HH:00:45` | 59:15 | Hollow's Lantern launches its first meteorite. |
+| `HH:05:27` | 54:33 | Sand begins flowing. |
+| `HH:18:11` | 41:49 | The Stranger brightens. |
+| `HH:31:22` | 28:38 | The Sun Station begins its fall. |
+| `HH:31:35` | 28:25 | The Sun Station has faded into the Sun. |
+| `HH:46:22` | 13:38 | Meteorites become more frequent. |
+| `HH:54:33` | 5:27 | The Interloper can be swallowed by the growing Sun. |
+| About `HH:54:35` | About 5:25 | The Interloper reaches the Sun and fades out with its orbit. |
+| `HH:55:27` | 4:33 | Sand stops flowing. |
+| `HH:57:16` | 2:44 | The last stars disappear. |
+| Next `HH:00:00` | 0:00 | The supernova finale begins. |
+
 
 ## How the Quantum Moon moves
 
@@ -74,6 +96,6 @@ The Quantum Moon starts near a randomly selected planet. It can move to another 
 
 1. The mouse reaches the Moon when it is visible.
 2. The configured timer elapses, if **Quantum Moon · timed shifting** is on.
-3. Wallpaper Engine or Lively pauses the wallpaper, even if timed shifting is off. The Moon changes planet immediately, so it is already in its new position when playback resumes.
+3. Wallpaper Engine or Lively pauses the wallpaper, even if timed shifting is off. In Lively, this requires the `--pause-event true` argument described above. The Moon changes planet immediately, so it is already in its new position when playback resumes.
 
 The timer stops while the wallpaper is paused and starts a fresh interval when it resumes. Whether the host pauses the wallpaper depends on its playback settings; a window covering only part of the wallpaper does not necessarily trigger a pause.

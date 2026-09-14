@@ -309,7 +309,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   width: 100%; height: auto;
   object-fit: contain; transform: translate(-50%, -50%);
   opacity: 0;
-  transition: opacity 1.5s ease-in-out;
+  transition: opacity var(--loop-sand-fade-duration, 1.5s) ease-in-out;
 }
 .loop-disabled .sand-pillar { opacity: 1; }
 .loop-active.loop-sand-flowing .sand-pillar { opacity: 1; }
@@ -445,7 +445,10 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   top: var(--orbit-top, 33.5%); left: var(--orbit-left, 41%);
   width: var(--orbit-width, 72%); height: var(--orbit-height, 33%);
   border-radius: 50%;
+  transition: opacity .5s ease;
 }
+.interloper-orbit--swallowed,
+.loop-finale .interloper-orbit--swallowed { opacity: 0; }
 .interloper {
   position: absolute; z-index: 2;
   left: 0;

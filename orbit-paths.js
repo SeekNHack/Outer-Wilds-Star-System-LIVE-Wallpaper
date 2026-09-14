@@ -102,7 +102,8 @@
 
         const cometCenter = centerOf(cometOrbit, bounds, scale);
         drawOrbit(cometCenter.x, cometCenter.y, cometOrbit.offsetWidth / 2,
-          cometOrbit.offsetHeight / 2, comet, opacity, trail, bounds, scale);
+          cometOrbit.offsetHeight / 2, comet,
+          opacity * Number.parseFloat(getComputedStyle(cometOrbit).opacity), trail, bounds, scale);
       }
       if (beaconPathOpacity > 0 && opacity > 0) {
         const center = centerOf(beaconOrbit, bounds, scale);
