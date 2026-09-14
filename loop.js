@@ -108,6 +108,7 @@
     root.style.removeProperty('--loop-world-opacity');
     root.style.removeProperty('--loop-cover-opacity');
     root.style.removeProperty('--loop-sand-fade-duration');
+    root.style.removeProperty('--loop-twins-progress');
     window.dispatchEvent(new CustomEvent('wallpaper-loop-star-visibility', { detail: 1 }));
   }
 
@@ -188,6 +189,9 @@
     renderProbe();
     root.classList.toggle('loop-sand-flowing',
       passed(milestones.sandStart) && storyTime < at(milestones.sandStop - SAND_FADE_SECONDS));
+    root.style.setProperty('--loop-twins-progress', String(clamp01(
+      (storyTime - at(milestones.sandStart)) / at(milestones.sandStop - milestones.sandStart)
+    )));
     const stationFallStart = at(milestones.stationDestroyed);
     const stationFall = clamp01((storyTime - stationFallStart) / at(STATION_FALL_SECONDS));
     root.style.setProperty('--loop-station-left', `${90 - 40 * smooth(stationFall)}%`);

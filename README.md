@@ -58,7 +58,7 @@ The table below shows the 22-minute timer mode. **At the exact hour** scales sto
 | About 21:58 | On later cycles, the cannon fires just after the scene fades back in. |
 | 21:45 | Hollow's Lantern launches its first meteorite toward Brittle Hollow. |
 | About 21:00 | The probe begins fading after one minute of flight, or about 20:58 on later cycles. |
-| 20:00 | Sand starts flowing between the Hourglass Twins. |
+| 20:00 | Sand starts flowing between the Hourglass Twins; Ash Twin gradually empties and Ember Twin fills. |
 | 15:20 | The Stranger becomes brighter. |
 | 10:30 | The Sun Station starts spiraling inward while continuing to orbit the Sun. |
 | 10:25 | The Sun Station finishes entering the Sun and has faded away. |
@@ -67,7 +67,7 @@ The table below shows the 22-minute timer mode. **At the exact hour** scales sto
 | 2:00 | The Interloper can be swallowed once its icy head enters the visible Sun. |
 | About 1:59 | At the default motion speed, the Interloper reaches the Sun and fades out. Changing the overall motion speed can shift this crossing. |
 | 1:42 | The sand flow begins its 1.5-second fade-out. |
-| 1:40 | The sand flow has completely stopped. |
+| 1:40 | The sand flow has completely stopped and both twins show their final appearance. |
 | 1:30 | The Stranger tilts. |
 | 1:00 | The last stars disappear completely. |
 | 0:00 | The countdown reaches zero and the red Sun begins to collapse and turn blue. |

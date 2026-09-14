@@ -156,6 +156,9 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   position: absolute; z-index: 1; top: 50%; left: 50%;
   width: 18%; height: 18%; border-radius: 50%;
   transform: translate(-50%, -50%);
+  background: radial-gradient(circle,
+    rgba(255, 72, 24, calc(.55 * var(--loop-sun-red, 0))),
+    rgba(255, 56, 20, calc(.19 * var(--loop-sun-red, 0))) 48%, transparent 74%);
   filter: blur(14px);
 }
 .sun-glow::before,
@@ -165,7 +168,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 }
 .sun-glow::before {
   background: radial-gradient(circle, rgba(255, 125, 24, .45), rgba(255, 125, 24, .15) 48%, transparent 74%);
-  opacity: calc(1 - var(--loop-sun-blue, 0));
+  opacity: calc(1 - var(--loop-sun-red, 0) - var(--loop-sun-blue, 0));
 }
 .sun-glow::after {
   background: radial-gradient(circle, rgba(80, 205, 255, .65), rgba(50, 150, 255, .25) 48%, transparent 78%);
@@ -306,6 +309,15 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 .planet--ember, .planet--ash { width: 70%; height: auto; top: 0; }
 .planet--ember { left: 0; }
 .planet--ash { left: 100%; }
+.planet--ember:not(.planet--twins-final),
+.planet--ash:not(.planet--twins-final) { opacity: calc(1 - var(--loop-twins-progress, 0)); }
+.planet--twins-final { opacity: var(--loop-twins-progress, 0); }
+/* Ash_Twin_Empty.png has less padding than the original, so its artwork
+   needs a smaller box to stay aligned during the crossfade. */
+.planet--ash.planet--twins-final {
+  width: 54%;
+  transform: translate(-48.5%, -51.2%) scale(var(--object-scale, 1));
+}
 .sand-pillar {
   position: absolute; top: 0; left: 50%;
   width: 100%; height: auto;
