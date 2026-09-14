@@ -146,6 +146,19 @@
         "min": 100,
         "max": 3000,
         "editable": true
+      },
+      "meteoritesenabled": {
+        "order": 18,
+        "condition": "loopenabled.value == true",
+        "text": "Loop · Hollow's Lantern meteorites",
+        "type": "bool",
+        "value": true
+      },
+      "giantslightningenabled": {
+        "order": 19,
+        "text": "Giant's Deep · red lightning",
+        "type": "bool",
+        "value": true
       }
     }
   },

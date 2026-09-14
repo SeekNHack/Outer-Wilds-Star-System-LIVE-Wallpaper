@@ -272,7 +272,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 .stranger-disabled .stranger-wrap { display: none; }
 .stranger-disabled .sun { -webkit-mask-image: none; mask-image: none; }
 .sun-station-orbit {
-  position: absolute; z-index: 2; top: 50%; left: 50%;
+  position: absolute; z-index: 1; top: 50%; left: 50%;
   width: calc(19% * var(--orbit-scale, 1)); height: calc(19% * var(--orbit-scale, 1));
   border-radius: 50%;
   transform: translate(-50%, -50%) rotate(-90deg);
@@ -319,6 +319,34 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 .planet--timber { --size: clamp(32px, 5.2vmin, 55px); }
 .planet--brittle { --size: clamp(33px, 5.3vmin, 61px); }
 .planet--giants { --size: clamp(42px, 7vmin, 75px); }
+.planet--timber { --spin-period: 210s; }
+.planet--brittle { --spin-period: 240s; }
+.planet--giants { --spin-period: 270s; }
+.planet--bramble { --spin-period: 300s; }
+.planet--timber, .planet--brittle, .planet--giants, .planet--bramble {
+  animation: planet-spin var(--spin-period) linear infinite;
+}
+.giants-lightning {
+  position: absolute; z-index: 1; top: 50%; left: 100%;
+  width: clamp(42px, 7vmin, 75px); height: clamp(42px, 7vmin, 75px);
+  transform: translate(-50%, -50%) scale(var(--object-scale, 1));
+  clip-path: circle(42% at 50% 50%);
+  background: radial-gradient(circle 60% at var(--storm-x, 50%) var(--storm-y, 50%),
+    rgba(255, 48, 37, .96), rgba(236, 9, 30, .62) 52%, transparent 100%);
+  opacity: 0;
+  pointer-events: none;
+}
+.giants-lightning svg {
+  display: block; width: 100%; height: 100%;
+  filter: drop-shadow(0 0 3px #ff3039) drop-shadow(0 0 6px #ef1625);
+}
+.giants-lightning path {
+  fill: none; stroke: #ff8a7c; stroke-width: 2.5;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.giants-lightning .giants-lightning__core { stroke: #fff0dd; stroke-width: 1; }
+.giants-lightning .giants-lightning__branch { stroke: #ff4d4a; stroke-width: 1.2; }
+.moon-orbit--giants { z-index: 2; }
 .planet--bramble { --size: clamp(42px, 7.5vmin, 85px); }
 .moon-orbit {
   position: absolute; top: 50%; left: 100%;
@@ -480,20 +508,45 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 }
 .meteorite {
   position: absolute; left: 0; top: 0;
-  width: clamp(3px, .45vmin, 6px); height: clamp(1px, .16vmin, 2px);
-  border-radius: 100%;
-  background: #fff9d9;
-  box-shadow: 0 0 4px 1px #fff, 0 0 10px 2px rgba(255, 160, 67, .9);
-  transform-origin: 0 50%;
+  width: clamp(3px, .55vmin, 5px); height: clamp(3px, .55vmin, 5px);
+  border-radius: 50%;
+  background: #ffad42;
+  box-shadow:
+    0 0 3px 1px rgba(255, 216, 137, .9),
+    0 0 8px 3px rgba(255, 113, 27, .6);
   will-change: transform, opacity;
 }
-.meteorite::after {
+.meteorite::before {
   content: ""; position: absolute; right: 65%; top: 50%;
-  width: clamp(14px, 2.8vmin, 34px); height: 2px;
+  width: clamp(8px, 1.25vmin, 12px); height: clamp(3px, .45vmin, 5px);
   transform: translateY(-50%);
-  border-radius: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 179, 76, .7), rgba(255, 250, 205, .95));
+  border-radius: 50%;
+  background: linear-gradient(90deg, transparent, rgba(255, 75, 21, .55) 40%, rgba(255, 175, 58, .95) 85%, #ffe6a1);
   filter: blur(1px);
+}
+.meteorite::after {
+  content: ""; position: absolute; right: 165%; top: 50%;
+  width: clamp(9px, 1.6vmin, 15px); height: clamp(5px, .85vmin, 8px);
+  transform: translateY(-50%);
+  background:
+    radial-gradient(circle at 30% 35%, rgba(136, 130, 121, .32), transparent 54%),
+    radial-gradient(circle at 75% 60%, rgba(89, 87, 83, .4), transparent 66%);
+  filter: blur(2px);
+}
+.meteor-impact {
+  position: absolute; left: 0; top: 0;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: #ffebbb;
+  box-shadow: 0 0 4px 2px rgba(255, 185, 80, .9),
+              0 0 9px 3px rgba(255, 103, 28, .55);
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.meteor-impact::before {
+  content: ""; position: absolute; inset: -3px;
+  border: 1px solid rgba(255, 190, 91, .7);
+  border-radius: 50%;
 }
 .white-hole {
   position: absolute; z-index: 3;
@@ -559,6 +612,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 @keyframes binary-spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 @keyframes station-orbit { from { transform: translate(-50%, -50%) rotate(-90deg); } to { transform: translate(-50%, -50%) rotate(270deg); } }
 @keyframes moon-orbit { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+@keyframes planet-spin { from { transform: translate(-50%, -50%) rotate(0deg) scale(var(--object-scale, 1)); } to { transform: translate(-50%, -50%) rotate(360deg) scale(var(--object-scale, 1)); } }
 @keyframes sun-pulse { from { filter: brightness(.95); } to { filter: brightness(1.14); } }
 @keyframes sun-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes beacon-glow { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }

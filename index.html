@@ -61,6 +61,7 @@
       <div class="orbit orbit--giants">
         <div class="traveller traveller--giants">
           <img class="planet planet--giants" src="./assets/Giant's_Deep.png" alt="" draggable="false">
+          <span id="giants-lightning" class="giants-lightning" aria-hidden="true"></span>
           <span class="moon-orbit moon-orbit--giants"><img class="moon moon--orbital-probe" src="./assets/Probe_Cannon.png" alt="" draggable="false"><span class="probe-burst"></span></span>
           <span id="quantum-orbit" class="quantum-orbit"><span class="quantum-hover-target"><img class="quantum-moon" src="./assets/Quantum_Moon.png" alt="" draggable="false"></span></span>
         </div>
@@ -199,13 +200,13 @@
     });
 
     function syncOrbitAnimations() {
-      document.querySelectorAll('.traveller, .binary-system, .moon-orbit, .quantum-orbit, .sun-station-orbit')
+      document.querySelectorAll('.traveller, .binary-system, .moon-orbit, .quantum-orbit, .sun-station-orbit, .planet--timber, .planet--brittle, .planet--giants, .planet--bramble')
         .forEach(element => element.getAnimations().forEach(animation => {
           animation.playbackRate = orbitSpeed * previewScale;
         }));
     }
 
-    const orbitAnimationNames = new Set(['orbit', 'binary-spin', 'moon-orbit', 'station-orbit', 'stranger-orbit']);
+    const orbitAnimationNames = new Set(['orbit', 'binary-spin', 'moon-orbit', 'station-orbit', 'stranger-orbit', 'planet-spin']);
     function syncLoopEffectAnimations() {
       document.getAnimations().forEach(animation => {
         if (!orbitAnimationNames.has(animation.animationName) && animation.playbackRate !== previewScale) {
@@ -404,7 +405,7 @@
       interloperBeam.style.opacity = '';
       cometProgress = cometStartProgress;
       previousFrameTime = null;
-      document.querySelectorAll('.solar-system, .traveller, .binary-system, .moon-orbit, .quantum-orbit, .sun-station-orbit, .sun__image')
+      document.querySelectorAll('.solar-system, .traveller, .binary-system, .moon-orbit, .quantum-orbit, .sun-station-orbit, .sun__image, .planet--timber, .planet--brittle, .planet--giants, .planet--bramble')
         .forEach(element => element.getAnimations().forEach(animation => { animation.currentTime = 0; }));
       syncOrbitAnimations();
       syncStrangerAnimation();
@@ -487,53 +488,169 @@
     const meteoriteLayer = document.getElementById('meteorite-layer');
     const lantern = document.querySelector('.moon--hollow-lantern');
     const brittlePlanet = document.querySelector('.planet--brittle');
-    let meteoriteTimer;
-    function scheduleMeteorite() {
-      clearTimeout(meteoriteTimer);
-      const rate = Math.max(1, orbitSpeed * previewScale);
-      meteoriteTimer = setTimeout(() => {
-        spawnMeteorite();
-        if (Math.random() < .45) {
-          setTimeout(spawnMeteorite, (0.2 + Math.random() * .45) * 1000 / rate);
-        }
-        scheduleMeteorite();
-      }, (4 + Math.random() * 8) * 1000 / rate);
+    const meteorLateStart = 17 * 60;
+    const meteorLoopEnd = 22 * 60;
+    let meteorLoopEnabled = true;
+    let meteorUserEnabled = true;
+    let meteorStoryTime = 0;
+    let meteorLatePhase = false;
+    let meteorFinaleStarted = false;
+    let firstMeteorPending = true;
+    let nextMeteorTime = null;
+    let pairedMeteorTime = null;
+    let meteorGeneration = 0;
+    // One or two per burst: a 25% chance of a pair gives 1.25 meteors on
+    // average. Intervals average 75s early and 25s late: ~1/min and ~3/min.
+    const meteorDelay = late => late
+      ? 16 + Math.random() * 18
+      : 50 + Math.random() * 50;
+    function resetMeteorSchedule(storyTime = 0) {
+      ++meteorGeneration;
+      meteoriteLayer.replaceChildren();
+      meteorLatePhase = storyTime >= meteorLateStart;
+      meteorFinaleStarted = false;
+      firstMeteorPending = storyTime < 15;
+      nextMeteorTime = firstMeteorPending ? 15 : storyTime + meteorDelay(meteorLatePhase);
+      pairedMeteorTime = null;
     }
+    window.addEventListener('wallpaper-loop-enabled-changed', event => {
+      meteorLoopEnabled = Boolean(event.detail);
+      if (!meteorLoopEnabled) resetMeteorSchedule();
+    });
+    window.addEventListener('wallpaper-meteorites-enabled-changed', event => {
+      meteorUserEnabled = Boolean(event.detail);
+      resetMeteorSchedule(meteorStoryTime);
+    });
+    window.addEventListener('wallpaper-loop-reset', () => {
+      meteorStoryTime = 0;
+      resetMeteorSchedule();
+    });
+    window.addEventListener('wallpaper-loop-time', event => {
+      const storyTime = Number(event.detail);
+      if (!Number.isFinite(storyTime)) return;
+      meteorStoryTime = storyTime;
+      if (!meteorLoopEnabled || !meteorUserEnabled || wallpaperPaused) return;
+      if (storyTime >= meteorLoopEnd) {
+        if (!meteorFinaleStarted) {
+          meteorFinaleStarted = true;
+          ++meteorGeneration;
+          meteoriteLayer.replaceChildren();
+        }
+        return;
+      }
+      if (storyTime >= meteorLateStart && !meteorLatePhase) {
+        meteorLatePhase = true;
+        nextMeteorTime = storyTime + meteorDelay(true);
+      }
+      if (pairedMeteorTime !== null && storyTime >= pairedMeteorTime) {
+        pairedMeteorTime = null;
+        spawnMeteorite();
+      }
+      if (storyTime >= nextMeteorTime) {
+        spawnMeteorite();
+        if (!firstMeteorPending && Math.random() < .25) {
+          pairedMeteorTime = storyTime + 2 + Math.random() * 2;
+        }
+        firstMeteorPending = false;
+        nextMeteorTime = storyTime + meteorDelay(meteorLatePhase);
+      }
+    });
+    resetMeteorSchedule();
     function spawnMeteorite() {
-      if (wallpaperPaused || reducedMotion.matches) { scheduleMeteorite(); return; }
+      if (wallpaperPaused || reducedMotion.matches ||
+          meteoriteLayer.querySelectorAll('.meteorite').length >= 2) return;
       const systemBounds = system.getBoundingClientRect();
       const scale = systemBounds.width / system.offsetWidth;
+      if (!Number.isFinite(scale) || scale <= 0) return;
       const source = lantern.getBoundingClientRect();
       const target = brittlePlanet.getBoundingClientRect();
-      const startX = (source.left + source.width / 2 - systemBounds.left) / scale;
-      const startY = (source.top + source.height / 2 - systemBounds.top) / scale;
-      const endX = (target.left + target.width / 2 - systemBounds.left) / scale;
-      const endY = (target.top + target.height / 2 - systemBounds.top) / scale;
+      const targetX = (target.left + target.width / 2 - systemBounds.left) / scale;
+      const targetY = (target.top + target.height / 2 - systemBounds.top) / scale;
+      const sourceX = (source.left + source.width / 2 - systemBounds.left) / scale;
+      const sourceY = (source.top + source.height / 2 - systemBounds.top) / scale;
+      const directionX = targetX - sourceX;
+      const directionY = targetY - sourceY;
+      const distance = Math.hypot(directionX, directionY) || 1;
+      const unitX = directionX / distance;
+      const unitY = directionY / distance;
+      // Scatter impacts across the visible inner face, rather than always
+      // ending at the same point on the rim nearest Hollow's Lantern.
+      // The planet image spins, so its viewport bounding box can be larger
+      // than the circular sprite. Its unrotated width gives the true diameter.
+      const objectScale = Number.parseFloat(getComputedStyle(brittlePlanet).getPropertyValue('--object-scale')) || 1;
+      const planetDiameter = brittlePlanet.offsetWidth * objectScale;
+      const impactDepth = planetDiameter * (.04 + Math.random() * .22);
+      const impactSide = planetDiameter * (Math.random() - .5) * .36;
+      const endX = targetX - unitX * impactDepth - unitY * impactSide;
+      const endY = targetY - unitY * impactDepth + unitX * impactSide;
+      // Emerge from Hollow's Lantern itself, using its position at launch.
+      const startX = sourceX;
+      const startY = sourceY;
+      const arc = (Math.random() < .5 ? -1 : 1) * (6 + Math.random() * 7);
       const meteor = document.createElement('span');
       meteor.className = 'meteorite';
       meteoriteLayer.appendChild(meteor);
-      const drift = (Math.random() - .5) * 70;
-      const duration = (1.1 + Math.random() * .7) * 1000 / Math.max(1, orbitSpeed * previewScale);
+      const generation = meteorGeneration;
+      const duration = Math.max(950,
+        (1.4 + Math.random() * .6) * 1000 / Math.max(1, orbitSpeed * previewScale));
       const started = performance.now();
-      function move(now) {
-        const progress = Math.min(1, (now - started) / duration);
-        const eased = progress * progress * (3 - 2 * progress);
-        const x = startX + (endX - startX) * eased + drift * Math.sin(progress * Math.PI);
-        const y = startY + (endY - startY) * eased;
-        const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
-        meteor.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${angle}deg)`;
-        meteor.style.opacity = String(Math.min(1, progress * 8) * (1 - Math.max(0, progress - .78) / .22));
-        if (progress < 1) requestAnimationFrame(move);
-        else meteor.remove();
+      function targetShift() {
+        const bounds = system.getBoundingClientRect();
+        const currentScale = bounds.width / system.offsetWidth;
+        const planet = brittlePlanet.getBoundingClientRect();
+        return {
+          x: (planet.left + planet.width / 2 - bounds.left) / currentScale - targetX,
+          y: (planet.top + planet.height / 2 - bounds.top) / currentScale - targetY
+        };
       }
-      requestAnimationFrame(move);
+      function showImpact() {
+        const impact = document.createElement('span');
+        impact.className = 'meteor-impact';
+        meteoriteLayer.appendChild(impact);
+        const impactStarted = performance.now();
+        function animateImpact(now) {
+          if (generation !== meteorGeneration) { impact.remove(); return; }
+          const progress = Math.min(1, (now - impactStarted) / 380);
+          const shift = targetShift();
+          impact.style.transform = `translate3d(${endX + shift.x}px, ${endY + shift.y}px, 0) translate(-50%, -50%) scale(${.7 + progress * 1.4})`;
+          impact.style.opacity = String(Math.pow(1 - progress, 1.5));
+          if (progress < 1) requestAnimationFrame(animateImpact);
+          else impact.remove();
+        }
+        animateImpact(impactStarted);
+      }
+      function move(now) {
+        if (generation !== meteorGeneration) { meteor.remove(); return; }
+        const progress = Math.min(1, (now - started) / duration);
+        const eased = Math.pow(progress, 1.25);
+        const curve = arc * Math.pow(Math.sin(progress * Math.PI), 2);
+        // Carry the launch path with the moving planet, so its end remains on
+        // the current surface even when the orbit is running at preview speed.
+        const shift = targetShift();
+        const x = startX + (endX - startX) * eased - unitY * curve + shift.x;
+        const y = startY + (endY - startY) * eased + unitX * curve + shift.y;
+        const travelSpeed = 1.25 * Math.pow(Math.max(progress, .01), .25);
+        const curveSpeed = arc * Math.PI * Math.sin(2 * Math.PI * progress);
+        const angle = Math.atan2(
+          (endY - startY) * travelSpeed + unitX * curveSpeed,
+          (endX - startX) * travelSpeed - unitY * curveSpeed
+        ) * 180 / Math.PI;
+        meteor.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) rotate(${angle}deg)`;
+        meteor.style.opacity = String(Math.min(1, progress * 8));
+        if (progress < 1) requestAnimationFrame(move);
+        else {
+          meteor.remove();
+          showImpact();
+        }
+      }
+      move(started);
     }
-    scheduleMeteorite();
   </script>
   <script src="./starfield.js"></script>
   <script src="./orbit-paths.js"></script>
   <script src="./wallpaper-settings.js"></script>
   <script src="./explosion-particles.js"></script>
+  <script src="./giants-lightning.js"></script>
   <script src="./loop.js"></script>
 </body>
 </html>

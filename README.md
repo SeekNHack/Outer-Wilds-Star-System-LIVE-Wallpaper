@@ -7,6 +7,9 @@ An animated web wallpaper inspired by the solar system of *Outer Wilds*.
 - Hover over the Quantum Moon to move it to another planet. It can also vanish into a sixth, empty location, shift automatically at a configurable interval, or move when Wallpaper Engine pauses the wallpaper.
 - Moving stars come in different sizes and shades of white, blue, yellow, and orange. Their density and colors are configurable.
 - At the start of each loop, the Orbital Probe Cannon fires a glowing probe in a new random direction.
+- Timber Hearth, Brittle Hollow, Giant's Deep, and Dark Bramble rotate slowly as they orbit.
+- Hollow's Lantern launches its first meteorite toward Brittle Hollow 15 seconds into the loop. Later launches average about one per minute, rising to about three per minute during the final five minutes; some arrive in pairs. They can be switched off.
+- Red lightning briefly lights up different parts of Giant's Deep about eight times per minute, even when the loop is off. It can be switched off separately.
 - The loop of the 22-minute timeline is trying to be the most accurate possible.
 
 ## Wallpaper Engine settings
@@ -32,6 +35,8 @@ The first column identifies the corresponding option in Wallpaper Engine.
 | **Loop** | On | On / off | Recreates a timed stellar collapse and supernova sequence. Off keeps the wallpaper's continuous animation. |
 | **Loop · show countdown** | On | On / off | Shows the time until the finale starts above the bottom-right edge, clear of the Windows taskbar. It stays still while Wallpaper Engine pauses the wallpaper and is hidden when the loop is off or the finale begins. |
 | **Loop · speed (%)** | `100%` | `100–3000%` | Sets the playback speed of the loop, orbits, and other motion. `100%` is normal speed; about `2243%` compresses a 22-minute story and its finale to one real minute. Use `?loopacceleration=2243` in a browser preview. |
+| **Loop · Hollow's Lantern meteorites** | On | On / off | Enables the meteorites that hit Brittle Hollow while the loop runs. They average about one per minute until the final five minutes, then about three per minute. |
+| **Giant's Deep · red lightning** | On | On / off | Enables brief red lightning inside Giant's Deep, averaging eight flashes per real minute. |
 
 ### Timeline by countdown at a 22-minute duration
 
@@ -39,12 +44,14 @@ The first column identifies the corresponding option in Wallpaper Engine.
 | --- | --- |
 | 22:00 | The loop and countdown begin. On the first cycle, the Orbital Probe Cannon fires immediately with a yellow-orange explosion and sends a glowing probe in a random direction. |
 | About 21:58 | On later cycles, the cannon fires just after the scene fades back in. |
+| 21:45 | Hollow's Lantern launches its first meteorite toward Brittle Hollow. |
 | About 21:00 | The probe begins fading after one minute of flight, or about 20:58 on later cycles. |
 | 20:00 | Sand starts flowing between the Hourglass Twins. |
 | 15:20 | The Stranger becomes brighter. |
 | 10:30 | The Sun Station starts spiraling inward while continuing to orbit the Sun. |
 | 10:25 | The Sun Station finishes entering the Sun and has faded away. |
 | 9:00 | The Stranger brightens again. |
+| 5:00 | Hollow's Lantern's meteorites become more frequent, rising from about one to about three per minute. |
 | 2:00 | The Interloper can be swallowed once its icy head enters the visible Sun. |
 | About 1:59 | At the default motion speed, the Interloper reaches the Sun and fades out. Changing the overall motion speed can shift this crossing. |
 | 1:42 | The sand flow begins its 1.5-second fade-out. |

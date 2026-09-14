@@ -33,6 +33,14 @@ window.wallpaperPropertyListener = {
         window.dispatchEvent(new CustomEvent('wallpaper-loop-enabled-changed', { detail: enabled }));
         continue;
       }
+      if (key === 'meteoritesenabled' || key === 'giantslightningenabled') {
+        const enabled = property.value === true || property.value === 1 || property.value === '1' || property.value === 'true';
+        const eventName = key === 'meteoritesenabled'
+          ? 'wallpaper-meteorites-enabled-changed'
+          : 'wallpaper-giants-lightning-enabled-changed';
+        window.dispatchEvent(new CustomEvent(eventName, { detail: enabled }));
+        continue;
+      }
       if (key === 'loopcountdown') {
         const enabled = property.value === true || property.value === 1 || property.value === '1' || property.value === 'true';
         document.documentElement.classList.toggle('loop-countdown-enabled', enabled);
