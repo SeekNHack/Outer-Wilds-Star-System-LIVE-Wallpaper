@@ -141,6 +141,7 @@
   }
 
   function render() {
+    window.dispatchEvent(new CustomEvent('wallpaper-loop-time', { detail: elapsed }));
     updateCountdown();
     const finale = elapsed >= storyDuration();
     const storyTime = Math.min(elapsed, storyDuration());

@@ -56,6 +56,7 @@
           <span class="moon-orbit moon-orbit--brittle"><img class="moon moon--hollow-lantern" src="./assets/Hollows_Lantern.png" alt="" draggable="false"></span>
         </div>
       </div>
+      <div id="meteorite-layer" class="meteorite-layer" aria-hidden="true"></div>
 
       <div class="orbit orbit--giants">
         <div class="traveller traveller--giants">
@@ -233,16 +234,22 @@
 
     // Sample the ellipse by arc length so the comet covers equal distances
     // in equal time without leaving its orbit.
-    let orbitDuration = 180000;
-    // Calibrated so the first Sun crossing after the 2:00 gate is near 1:59.
+    // The orbit is sampled against the loop's story clock, so frame rate and
+    // preview acceleration cannot change the collision time.
     let cometStartProgress = .958;
     let cometProgress = cometStartProgress;
     let previousFrameTime = null;
     let cometCollisionArmed = false;
+    let loopStoryElapsed = 0;
+    let cometTimelineActive = false;
+    let cometTimeline = [];
+    let cometRephase = null;
     let cometSwallowed = false;
-    let cometWasInsideSun = false;
+    let cometInitiallyPlaced = false;
     const orbitSamples = 720;
+    const cometTimelineStep = .1;
     let cometPath;
+    let cometGeometryKey = '';
     function measureCometPath() {
       // Use untransformed local coordinates: the parent scales the path and
       // the comet together, so its CSS left/top must stay in that same space.
@@ -250,6 +257,10 @@
       const centerY = interloperOrbit.offsetTop + interloperOrbit.offsetHeight / 2;
       const radiusX = interloperOrbit.offsetWidth / 2;
       const radiusY = interloperOrbit.offsetHeight / 2;
+      const geometryKey = [centerX, centerY, radiusX, radiusY,
+        sun.offsetLeft, sun.offsetTop, sun.offsetWidth, interloper.offsetWidth].join(':');
+      if (cometPath && geometryKey === cometGeometryKey) return false;
+      cometGeometryKey = geometryKey;
       const distances = new Float32Array(orbitSamples + 1);
       let previousX = centerX + radiusX;
       let previousY = centerY;
@@ -263,35 +274,94 @@
       }
       cometPath = { centerX, centerY, radiusX, radiusY, distances,
         length: distances[orbitSamples] };
+      return true;
     }
     measureCometPath();
+    const wrapCometPhase = phase => ((phase % 1) + 1) % 1;
+    function cometDistanceToSun(phase) {
+      const angle = angleAtDistance(wrapCometPhase(phase) * cometPath.length);
+      const x = cometPath.centerX + cometPath.radiusX * Math.cos(angle);
+      const y = cometPath.centerY + cometPath.radiusY * Math.sin(angle);
+      return Math.hypot(sun.offsetLeft - x, sun.offsetTop - y);
+    }
+    function cometSpeedBoost(phase) {
+      return 1 + Math.max(0, 1 - cometDistanceToSun(phase) / (sun.offsetWidth * 1.8)) * 3;
+    }
+    function advanceCometPhase(phase, seconds) {
+      const rate = orbitSpeed / 180;
+      const midpoint = phase + seconds * rate * cometSpeedBoost(phase) / 2;
+      return phase + seconds * rate * cometSpeedBoost(midpoint);
+    }
+    function rawCometPhaseAtStoryTime(seconds) {
+      if (!cometTimeline.length) return cometStartProgress;
+      const index = Math.max(0, Math.min(seconds / cometTimelineStep, cometTimeline.length - 1));
+      const before = Math.floor(index);
+      const after = Math.min(before + 1, cometTimeline.length - 1);
+      return cometTimeline[before] +
+        (cometTimeline[after] - cometTimeline[before]) * (index - before);
+    }
+    function cometPhaseAtStoryTime(seconds) {
+      let phase = rawCometPhaseAtStoryTime(seconds);
+      if (cometRephase && seconds < cometRephase.start + cometRephase.duration) {
+        const progress = Math.max(0, (seconds - cometRephase.start) / cometRephase.duration);
+        const eased = progress * progress * (3 - 2 * progress);
+        phase += cometRephase.offset * (1 - eased);
+      }
+      return wrapCometPhase(phase);
+    }
     function calibrateCometStart() {
       if (!cometPath || !sun.offsetWidth) return;
-      const sunX = sun.offsetLeft, sunY = sun.offsetTop;
-      const radius = sun.offsetWidth * .47, head = interloper.offsetWidth * .38;
-      let best = { phase: cometStartProgress, error: Infinity };
-      for (let candidate = 0; candidate < 1; candidate += .005) {
-        let phase = candidate, wasInside = false, impact = null;
-        for (let t = 0; t <= 1202; t += 2) {
-          const angle = angleAtDistance(phase * cometPath.length);
-          const x = cometPath.centerX + cometPath.radiusX * Math.cos(angle);
-          const y = cometPath.centerY + cometPath.radiusY * Math.sin(angle);
-          const distance = Math.hypot(sunX - x, sunY - y);
-          const red = Math.min(1, t / 1320);
-          const scale = 1 + .35 * red * red * (3 - 2 * red);
-          const inside = distance - head <= radius * scale;
-          if (t >= 1200 && inside && !wasInside) { impact = t; break; }
-          const boost = 1 + Math.max(0, 1 - distance / (radius * 1.8)) * 3;
-          phase = (phase + 2 / 180 * boost) % 1;
-          wasInside = inside;
+      const previousPhase = cometTimelineActive ? cometPhaseAtStoryTime(loopStoryElapsed) : cometProgress;
+      const objectScale = Number.parseFloat(getComputedStyle(sun).getPropertyValue('--object-scale')) || 1;
+      const sunRadius = sun.offsetWidth * objectScale * .47;
+      const cometHead = interloper.offsetWidth * objectScale * .38;
+      const redFraction = 1201 / 1320;
+      const redProgress = redFraction * redFraction * (3 - 2 * redFraction);
+      const contactRadius = sunRadius * (1 + .30 * redProgress) + cometHead;
+      const contactSamples = 4096;
+      let contactPhase = null;
+      for (let i = 0; i < contactSamples; i++) {
+        const phase = i / contactSamples;
+        const previous = wrapCometPhase(phase - 1 / contactSamples);
+        if (cometDistanceToSun(previous) > contactRadius &&
+            cometDistanceToSun(phase) <= contactRadius) {
+          contactPhase = phase;
+          break;
         }
-        if (impact !== null && Math.abs(impact - 1201) < best.error) best = { phase: candidate, error: Math.abs(impact - 1201) };
       }
-      cometStartProgress = best.phase;
-      cometProgress = cometStartProgress;
+      if (contactPhase === null) return;
+      // Integrate backwards from the first physical entry at 1:59 remaining.
+      let phase = contactPhase;
+      for (let t = 1201; t > 0; t -= cometTimelineStep) {
+        const step = Math.min(cometTimelineStep, t);
+        phase = advanceCometPhase(phase, -step);
+      }
+      cometStartProgress = wrapCometPhase(phase);
+      cometTimeline = [cometStartProgress];
+      phase = cometStartProgress;
+      for (let t = cometTimelineStep; t <= 1350; t += cometTimelineStep) {
+        phase = advanceCometPhase(phase, cometTimelineStep);
+        cometTimeline.push(phase);
+      }
+      cometRephase = null;
+      if (cometTimelineActive && loopStoryElapsed < 1200) {
+        const newPhase = wrapCometPhase(rawCometPhaseAtStoryTime(loopStoryElapsed));
+        const offset = ((previousPhase - newPhase + 1.5) % 1) - .5;
+        const duration = Math.min(90, Math.max(0, 1200 - loopStoryElapsed - 3));
+        if (duration > 0 && Math.abs(offset) > .0001) {
+          cometRephase = { start: loopStoryElapsed, duration, offset };
+        }
+      }
+      cometProgress = cometPhaseAtStoryTime(loopStoryElapsed);
     }
     calibrateCometStart();
-    window.addEventListener('resize', () => { measureCometPath(); calibrateCometStart(); });
+    window.addEventListener('resize', () => {
+      if (measureCometPath()) calibrateCometStart();
+    });
+    window.addEventListener('wallpaper-loop-time', event => {
+      loopStoryElapsed = Math.max(0, Number(event.detail) || 0);
+      cometTimelineActive = true;
+    });
     function syncStrangerAnimation() {
       system.getAnimations().forEach(animation => {
         if (animation.animationName === 'stranger-orbit') {
@@ -305,14 +375,15 @@
       syncStrangerAnimation();
     });
     window.addEventListener('wallpaper-speed-changed', event => {
-      orbitSpeed = event.detail;
-      orbitDuration = 180000 / (orbitSpeed * previewScale);
+      const nextSpeed = Number(event.detail);
+      if (!Number.isFinite(nextSpeed) || nextSpeed <= 0 || nextSpeed === orbitSpeed) return;
+      orbitSpeed = nextSpeed;
+      calibrateCometStart();
       syncStrangerAnimation();
       requestAnimationFrame(syncOrbitAnimations);
     });
     window.addEventListener('wallpaper-time-scale-changed', event => {
       previewScale = Math.max(1, Number(event.detail) || 1);
-      orbitDuration = 180000 / (orbitSpeed * previewScale);
       updateQuantumShiftTimer();
       requestAnimationFrame(() => {
         syncOrbitAnimations();
@@ -326,7 +397,9 @@
     window.addEventListener('wallpaper-loop-reset', () => {
       cometCollisionArmed = false;
       cometSwallowed = false;
-      cometWasInsideSun = false;
+      cometTimelineActive = false;
+      loopStoryElapsed = 0;
+      cometRephase = null;
       interloper.classList.remove('interloper--swallowed');
       interloperBeam.style.opacity = '';
       cometProgress = cometStartProgress;
@@ -361,16 +434,10 @@
       const sunCenterX = sun.offsetLeft;
       const sunCenterY = sun.offsetTop;
 
-      const baselineDistance = cometProgress * cometPath.length;
-      const baselineAngle = angleAtDistance(baselineDistance);
-      const baselineX = cometPath.centerX + cometPath.radiusX * Math.cos(baselineAngle);
-      const baselineY = cometPath.centerY + cometPath.radiusY * Math.sin(baselineAngle);
-      const distanceToSun = Math.hypot(sunCenterX - baselineX, sunCenterY - baselineY);
-      const maxBoostDistance = sun.offsetWidth * 1.8;
-      const speedBoost = 1 + Math.max(0, 1 - distanceToSun / maxBoostDistance) * 3;
-
-      if (!reducedMotion.matches && !wallpaperPaused) {
-        cometProgress = (cometProgress + (frameDelta / orbitDuration) * speedBoost) % 1;
+      if (cometTimelineActive) {
+        cometProgress = cometPhaseAtStoryTime(loopStoryElapsed);
+      } else if (!reducedMotion.matches && !wallpaperPaused) {
+        cometProgress = wrapCometPhase(advanceCometPhase(cometProgress, frameDelta / 1000 * previewScale));
       }
 
       const distance = cometProgress * cometPath.length;
@@ -393,22 +460,75 @@
       const visualAngle = targetAngle + 180;
       interloper.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) rotate(${visualAngle}deg) scale(var(--object-scale, 1))`;
       interloperBeam.style.transform = `translate3d(${x}px, ${y}px, 0) translate(0, -50%) rotate(${visualAngle}deg)`;
-      const sunScale = parseFloat(document.documentElement.style.getPropertyValue('--loop-sun-scale')) || 1;
-      // The sprite's icy head points toward the Sun; detect its first contact
-      // with the visible disc rather than waiting for the sprite's center.
-      const visibleSunRadius = sun.offsetWidth * sunScale * .47;
-      const headDistance = Math.hypot(sunCenterX - x, sunCenterY - y) - interloper.offsetWidth * .38;
-      const cometInsideSun = headDistance <= visibleSunRadius;
-      if (cometCollisionArmed && !cometSwallowed && cometInsideSun && !cometWasInsideSun) {
+      if (!cometInitiallyPlaced) {
+        cometInitiallyPlaced = true;
+        requestAnimationFrame(() => {
+          interloper.classList.add('interloper--ready');
+          interloperBeam.classList.add('interloper-beam--ready');
+        });
+      }
+      // Use the same local-space contact geometry as the phase calibration.
+      // Both sprites inherit the system scale, so viewport size cancels out.
+      const objectScale = Number.parseFloat(getComputedStyle(sun).getPropertyValue('--object-scale')) || 1;
+      const sunScale = Number.parseFloat(document.documentElement.style.getPropertyValue('--loop-sun-scale')) || 1;
+      const contactRadius = sun.offsetWidth * objectScale * sunScale * .47 +
+        interloper.offsetWidth * objectScale * .38;
+      const cometInsideSun = cometDistanceToSun(cometProgress) <= contactRadius;
+      if (cometCollisionArmed && !cometSwallowed && cometInsideSun) {
         cometSwallowed = true;
         interloper.classList.add('interloper--swallowed');
         interloperBeam.style.opacity = '0';
       }
-      cometWasInsideSun = cometInsideSun;
 
       if (!reducedMotion.matches) requestAnimationFrame(animateInterloper);
     }
     requestAnimationFrame(animateInterloper);
+
+    const meteoriteLayer = document.getElementById('meteorite-layer');
+    const lantern = document.querySelector('.moon--hollow-lantern');
+    const brittlePlanet = document.querySelector('.planet--brittle');
+    let meteoriteTimer;
+    function scheduleMeteorite() {
+      clearTimeout(meteoriteTimer);
+      const rate = Math.max(1, orbitSpeed * previewScale);
+      meteoriteTimer = setTimeout(() => {
+        spawnMeteorite();
+        if (Math.random() < .45) {
+          setTimeout(spawnMeteorite, (0.2 + Math.random() * .45) * 1000 / rate);
+        }
+        scheduleMeteorite();
+      }, (4 + Math.random() * 8) * 1000 / rate);
+    }
+    function spawnMeteorite() {
+      if (wallpaperPaused || reducedMotion.matches) { scheduleMeteorite(); return; }
+      const systemBounds = system.getBoundingClientRect();
+      const scale = systemBounds.width / system.offsetWidth;
+      const source = lantern.getBoundingClientRect();
+      const target = brittlePlanet.getBoundingClientRect();
+      const startX = (source.left + source.width / 2 - systemBounds.left) / scale;
+      const startY = (source.top + source.height / 2 - systemBounds.top) / scale;
+      const endX = (target.left + target.width / 2 - systemBounds.left) / scale;
+      const endY = (target.top + target.height / 2 - systemBounds.top) / scale;
+      const meteor = document.createElement('span');
+      meteor.className = 'meteorite';
+      meteoriteLayer.appendChild(meteor);
+      const drift = (Math.random() - .5) * 70;
+      const duration = (1.1 + Math.random() * .7) * 1000 / Math.max(1, orbitSpeed * previewScale);
+      const started = performance.now();
+      function move(now) {
+        const progress = Math.min(1, (now - started) / duration);
+        const eased = progress * progress * (3 - 2 * progress);
+        const x = startX + (endX - startX) * eased + drift * Math.sin(progress * Math.PI);
+        const y = startY + (endY - startY) * eased;
+        const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+        meteor.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${angle}deg)`;
+        meteor.style.opacity = String(Math.min(1, progress * 8) * (1 - Math.max(0, progress - .78) / .22));
+        if (progress < 1) requestAnimationFrame(move);
+        else meteor.remove();
+      }
+      requestAnimationFrame(move);
+    }
+    scheduleMeteorite();
   </script>
   <script src="./starfield.js"></script>
   <script src="./orbit-paths.js"></script>

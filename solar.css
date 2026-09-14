@@ -59,6 +59,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 .loop-finale .interloper-beam,
 .loop-finale .white-hole { opacity: var(--loop-world-opacity, 1); }
 .loop-finale .stranger-wrap { opacity: var(--loop-stranger-opacity, 1); }
+.loop-finale .meteorite-layer { opacity: var(--loop-world-opacity, 1); }
 
 .clock {
   position: absolute; z-index: 5;
@@ -423,23 +424,27 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   width: clamp(12px, 2.8vmin, 32px); height: auto;
   transform: translate(-50%, -50%) scale(var(--object-scale, 1));
   filter: drop-shadow(0 0 5px rgba(83, 192, 215, .4));
+  opacity: 0;
+  transition: opacity .5s ease;
   will-change: left, top, transform;
 }
 .interloper-beam {
   position: absolute; z-index: 1;
   left: 0; top: 0;
-  width: clamp(85px, 16vmin, 210px); height: clamp(10px, 2vmin, 24px);
+  width: clamp(65px, 10vmin, 135px); height: clamp(10px, 2vmin, 24px);
   transform: translate3d(-100px, -100px, 0);
   transform-origin: 0 50%;
   clip-path: polygon(0 0, 0 100%, 100% 50%);
-  background: radial-gradient(ellipse at 0 50%, rgba(244, 255, 255, .98) 0%, rgba(117, 223, 255, .7) 23%, rgba(69, 187, 255, .25) 67%, transparent 100%);
+  background: radial-gradient(ellipse at 0 50%, rgba(244, 255, 255, .98) 0%, rgba(117, 223, 255, .7) 23%, rgba(69, 187, 255, .25) 67%, transparent 100%), repeating-linear-gradient(100deg, transparent 0 13px, rgba(220, 250, 255, .22) 15px 18px, transparent 21px 31px);
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 13%, rgba(0, 0, 0, .75) 42%, transparent 100%);
   mask-image: linear-gradient(90deg, transparent 0%, #000 13%, rgba(0, 0, 0, .75) 42%, transparent 100%);
   filter: blur(6px);
-  opacity: .78;
+  opacity: 0;
+  transition: opacity .5s ease;
   mix-blend-mode: screen;
   pointer-events: none;
   will-change: transform;
+  animation: interloper-beam-flow 1.4s linear infinite;
 }
 .interloper-beam::after {
   content: ""; position: absolute; inset: 20% 0;
@@ -447,10 +452,49 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   background: radial-gradient(ellipse at 0 50%, rgba(255, 255, 255, .8), rgba(130, 224, 255, .28) 42%, transparent 100%);
   filter: blur(5px);
   mix-blend-mode: screen;
+  animation: interloper-beam-flicker 1.1s ease-in-out infinite alternate;
+}
+.interloper-beam::before {
+  content: ""; position: absolute; inset: 0;
+  clip-path: polygon(0 0, 0 100%, 100% 50%);
+  background:
+    radial-gradient(circle at 8% 48%, #fff 0 3px, transparent 4.5px),
+    radial-gradient(circle at 29% 34%, rgba(180, 243, 255, .98) 0 2.5px, transparent 4px),
+    radial-gradient(circle at 52% 67%, rgba(132, 226, 255, .95) 0 3px, transparent 4.5px),
+    radial-gradient(circle at 76% 42%, rgba(205, 249, 255, 1) 0 2.5px, transparent 4px),
+    radial-gradient(circle at 93% 58%, #fff 0 2px, transparent 3.5px),
+    radial-gradient(circle at 41% 22%, rgba(111, 212, 255, 1) 0 2px, transparent 3.5px);
+  background-size: 70px 100%;
+  filter: blur(.1px) drop-shadow(0 0 3px rgba(126, 226, 255, .9));
+  mix-blend-mode: screen;
+  animation: interloper-beam-particles .42s linear infinite;
 }
 .loop-active .interloper { transition: opacity .5s ease; }
 .loop-active .interloper-beam { transition: opacity .5s ease; }
+.interloper--ready { opacity: 1; }
+.interloper-beam--ready { opacity: .78; }
 .interloper--swallowed { opacity: 0; }
+.meteorite-layer {
+  position: absolute; z-index: 6; inset: 0;
+  pointer-events: none;
+}
+.meteorite {
+  position: absolute; left: 0; top: 0;
+  width: clamp(3px, .45vmin, 6px); height: clamp(1px, .16vmin, 2px);
+  border-radius: 100%;
+  background: #fff9d9;
+  box-shadow: 0 0 4px 1px #fff, 0 0 10px 2px rgba(255, 160, 67, .9);
+  transform-origin: 0 50%;
+  will-change: transform, opacity;
+}
+.meteorite::after {
+  content: ""; position: absolute; right: 65%; top: 50%;
+  width: clamp(14px, 2.8vmin, 34px); height: 2px;
+  transform: translateY(-50%);
+  border-radius: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 179, 76, .7), rgba(255, 250, 205, .95));
+  filter: blur(1px);
+}
 .white-hole {
   position: absolute; z-index: 3;
   top: 50%; left: 105%;
@@ -518,6 +562,19 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 @keyframes sun-pulse { from { filter: brightness(.95); } to { filter: brightness(1.14); } }
 @keyframes sun-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes beacon-glow { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+@keyframes interloper-beam-flow {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: 0 0, 80px 0; }
+}
+@keyframes interloper-beam-flicker {
+  from { opacity: .35; transform: scaleY(.82); }
+  to { opacity: .8; transform: scaleY(1.08); }
+}
+@keyframes interloper-beam-particles {
+  from { background-position: 0 0; opacity: .25; transform: scaleY(.82); }
+  35% { opacity: 1; transform: scaleY(1.12); }
+  to { background-position: 100px 0; opacity: .2; transform: scaleY(.9); }
+}
 @keyframes probe-fire {
   0% { opacity: 0; transform: translate(-50%, -50%) scale(.25); }
   7% { opacity: 1; transform: translate(-50%, -50%) scale(.6); }
