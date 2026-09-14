@@ -6,7 +6,7 @@ An animated web wallpaper inspired by the solar system of *Outer Wilds*.
 
 - Hover over the Quantum Moon to move it to another planet. It can also vanish into a sixth, empty location, shift automatically at a configurable interval, or move when the wallpaper host pauses the wallpaper.
 - Moving stars come in different sizes and shades of white, blue, yellow, and orange. Their density and colors are configurable.
-- At the start of each loop, the Orbital Probe Cannon fires a glowing probe in a new random direction.
+- At the start of each loop, the Orbital Probe Cannon aims in a new random direction, stays intact briefly, then breaks as it fires a glowing probe. Both cannon images keep facing the shot as they orbit.
 - Timber Hearth, Brittle Hollow, Giant's Deep, and Dark Bramble rotate slowly as they orbit.
 - Hollow's Lantern launches its first meteorite toward Brittle Hollow 15 seconds into a 22-minute loop, or about 45 seconds after the hour in hourly mode. Later launches average about one per minute, rising to about three per minute near the end; some arrive in pairs. They can be switched off.
 - Red lightning briefly lights up different parts of Giant's Deep about eight times per minute, even when the loop is off. It can be switched off separately.
@@ -54,10 +54,11 @@ The table below shows the 22-minute timer mode. **At the exact hour** scales sto
 
 | Countdown | Event in the wallpaper |
 | --- | --- |
-| 22:00 | The loop and countdown begin. On the first cycle, the Orbital Probe Cannon fires immediately with a yellow-orange explosion and sends a glowing probe in a random direction. |
-| About 21:58 | On later cycles, the cannon fires just after the scene fades back in. |
+| 22:00 | The loop and countdown begin with the Orbital Probe Cannon intact. |
+| 21:59 | On the first cycle, the cannon breaks, explodes and launches a glowing probe together after one second. |
+| About 21:57 | On later cycles, the cannon breaks and fires after the scene fades back in. |
 | 21:45 | Hollow's Lantern launches its first meteorite toward Brittle Hollow. |
-| About 21:00 | The probe begins fading after one minute of flight, or about 20:58 on later cycles. |
+| About 20:59 | The probe begins fading after one minute of flight, or about 20:57 on later cycles. |
 | 20:00 | Sand starts flowing between the Hourglass Twins; Ash Twin gradually empties and Ember Twin fills. |
 | 15:20 | The Stranger becomes brighter. |
 | 10:30 | The Sun Station starts spiraling inward while continuing to orbit the Sun. |
@@ -76,7 +77,7 @@ In hourly mode, the same events occur at these local clock times (rounded to the
 
 | Clock time | Countdown | Event |
 | --- | --- | --- |
-| `HH:00:28` | 59:32 | The cannon fires after the previous supernova and scene fade. |
+| `HH:00:29` | 59:31 | The cannon breaks and fires after the previous supernova and scene fade. |
 | `HH:00:45` | 59:15 | Hollow's Lantern launches its first meteorite. |
 | `HH:05:27` | 54:33 | Sand begins flowing. |
 | `HH:18:11` | 41:49 | The Stranger brightens. |

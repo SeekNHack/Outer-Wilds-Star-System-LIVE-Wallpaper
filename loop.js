@@ -9,12 +9,15 @@
   const STATION_FALL_SECONDS = 5;
   const PROBE_VISIBLE_SECONDS = 60;
   const PROBE_FADE_SECONDS = 1.5;
+  const PROBE_PRELAUNCH_SECONDS = 1;
   // Keep the red phase only 30% larger than normal before the final collapse begins.
   const RED_SUN_MAX_SCALE = 1.30;
   const root = document.documentElement;
   const sun = document.querySelector('.sun');
   const wallpaper = document.querySelector('.wallpaper');
   const probeCannon = document.querySelector('.moon--orbital-probe');
+  const probeMoonOrbit = document.querySelector('.moon-orbit--giants');
+  const giantTraveller = document.querySelector('.traveller--giants');
   const probeShot = document.querySelector('.probe-shot');
   const countdownElement = document.getElementById('loop-remaining');
   const previewCountdown = new URLSearchParams(window.location.search).get('loopcountdown');
@@ -50,7 +53,7 @@
   let appliedSunScale = 1;
   let probeOrigin = null;
   let probeDirection = Math.random() * Math.PI * 2;
-  let probeStartSeconds = 0;
+  let probeStartSeconds = PROBE_PRELAUNCH_SECONDS;
   let displayedRemainingSeconds = -1;
   let hourTarget = null;
   let hourRemainingSeconds = 0;
@@ -89,7 +92,7 @@
 
   function clearEffects() {
     root.classList.remove(
-      'loop-active', 'loop-probe-firing', 'loop-sand-flowing',
+      'loop-active', 'loop-probe-firing', 'loop-probe-broken', 'loop-sand-flowing',
       'loop-sails-open',
       'loop-dam-broken',
       'loop-tower-fallen', 'loop-end-times', 'loop-finale', 'loop-blackout'
@@ -122,11 +125,10 @@
     appliedSunScale = 1;
     probeOrigin = null;
     probeDirection = Math.random() * Math.PI * 2;
-    probeStartSeconds = fadeIn
-      ? triggerMode === 'hour'
-        ? FINALE_SECONDS + RESTART_FADE_SECONDS + .5
-        : RESTART_FADE_SECONDS + .5
+    const restartDelay = fadeIn
+      ? RESTART_FADE_SECONDS + .5 + (triggerMode === 'hour' ? FINALE_SECONDS : 0)
       : 0;
+    probeStartSeconds = restartDelay + PROBE_PRELAUNCH_SECONDS;
     probeShot.style.opacity = '0';
     displayedRemainingSeconds = -1;
     previousTime = null;
@@ -138,6 +140,7 @@
     }
     root.classList.toggle('loop-disabled', !enabled);
     window.dispatchEvent(new Event('wallpaper-loop-reset'));
+    aimProbeCannon();
     window.dispatchEvent(new CustomEvent('wallpaper-loop-story-duration', { detail: duration }));
   }
 
@@ -177,6 +180,20 @@
       (1 - clamp01((flightTime - PROBE_VISIBLE_SECONDS) / PROBE_FADE_SECONDS)));
   }
 
+  function orbitAngle(element) {
+    const transform = getComputedStyle(element).transform;
+    if (transform === 'none') return 0;
+    const matrix = new DOMMatrixReadOnly(transform);
+    return Math.atan2(matrix.b, matrix.a);
+  }
+
+  function aimProbeCannon() {
+    // Both animated orbits rotate the cannon's local right-facing axis.
+    // Cancel those rotations so it keeps pointing along the probe's path.
+    const parentAngle = orbitAngle(giantTraveller) + orbitAngle(probeMoonOrbit);
+    probeMoonOrbit.style.setProperty('--probe-aim-angle', `${probeDirection - parentAngle}rad`);
+  }
+
   function render() {
     window.dispatchEvent(new CustomEvent('wallpaper-loop-time', { detail: elapsed }));
     updateCountdown();
@@ -186,6 +203,9 @@
     root.classList.toggle('loop-active', true);
     root.classList.toggle('loop-probe-firing',
       elapsed >= probeStartSeconds && elapsed < probeStartSeconds + 1.2);
+    root.classList.toggle('loop-probe-broken',
+      elapsed >= probeStartSeconds);
+    aimProbeCannon();
     renderProbe();
     root.classList.toggle('loop-sand-flowing',
       passed(milestones.sandStart) && storyTime < at(milestones.sandStop - SAND_FADE_SECONDS));

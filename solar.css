@@ -380,7 +380,14 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   height: calc(clamp(88px, 13vmin, 119px) * var(--orbit-scale, 1));
   --period: 28s;
 }
-.moon--orbital-probe { --size: clamp(29px, 4.2vmin, 38px); }
+.moon--orbital-probe,
+.moon--orbital-probe-full {
+  --size: clamp(29px, 4.2vmin, 38px);
+  transform: translate(-50%, -50%) rotate(var(--probe-aim-angle, 0rad)) scale(var(--object-scale, 1));
+}
+.moon--orbital-probe { opacity: 0; }
+.loop-probe-broken .moon--orbital-probe { opacity: 1; }
+.loop-probe-broken .moon--orbital-probe-full { opacity: 0; }
 .probe-burst {
   position: absolute; z-index: 7; top: 50%; left: 100%;
   width: clamp(25px, 3.8vmin, 38px); aspect-ratio: 1;
