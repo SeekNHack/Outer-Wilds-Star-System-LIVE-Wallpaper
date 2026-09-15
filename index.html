@@ -70,7 +70,15 @@
           <span class="moon-orbit moon-orbit--giants">
             <img class="moon moon--orbital-probe-full" src="./assets/Probe_Cannon_Full.png" alt="" draggable="false">
             <img class="moon moon--orbital-probe" src="./assets/Probe_Cannon.png" alt="" draggable="false">
-            <span class="probe-burst"></span>
+            <span class="probe-burst" aria-hidden="true">
+              <i class="probe-burst__core"></i>
+              <i class="probe-burst__lobe"></i>
+              <i class="probe-burst__lobe"></i>
+              <i class="probe-burst__lobe"></i>
+              <i class="probe-burst__lobe"></i>
+              <i class="probe-burst__lobe"></i>
+              <i class="probe-burst__lobe"></i>
+            </span>
           </span>
           <span id="quantum-orbit" class="quantum-orbit"><span class="quantum-hover-target"><img class="quantum-moon" src="./assets/Quantum_Moon.png" alt="" draggable="false"></span></span>
         </div>
@@ -224,7 +232,6 @@
       });
     }
 
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const interloperBeam = document.getElementById('interloper-beam');
     const strangerOrbits = [[.62, .98], [.72, 1.08], [.84, 1.18]];
     function chooseStrangerOrbit() {
@@ -456,7 +463,7 @@
 
       if (cometTimelineActive) {
         cometProgress = cometPhaseAtStoryTime(loopStoryElapsed);
-      } else if (!reducedMotion.matches && !wallpaperPaused) {
+      } else if (!wallpaperPaused) {
         cometProgress = wrapCometPhase(advanceCometPhase(cometProgress, frameDelta / 1000 * previewScale));
       }
 
@@ -501,7 +508,7 @@
         interloperBeam.style.opacity = '0';
       }
 
-      if (!reducedMotion.matches) requestAnimationFrame(animateInterloper);
+      requestAnimationFrame(animateInterloper);
     }
     requestAnimationFrame(animateInterloper);
 
@@ -597,8 +604,7 @@
     });
     resetMeteorSchedule();
     function spawnMeteorite() {
-      if (wallpaperPaused || reducedMotion.matches ||
-          meteoriteLayer.querySelectorAll('.meteorite').length >= 2) return;
+      if (wallpaperPaused || meteoriteLayer.querySelectorAll('.meteorite').length >= 2) return;
       const systemBounds = system.getBoundingClientRect();
       const scale = systemBounds.width / system.offsetWidth;
       if (!Number.isFinite(scale) || scale <= 0) return;
