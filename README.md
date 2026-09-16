@@ -16,6 +16,21 @@ An animated web wallpaper inspired by the solar system of *Outer Wilds*.
 
 Both Wallpaper Engine and Lively expose the settings below. The first column names the option in either app. In Lively, right-click the wallpaper in the library and select **Customise**. Lively shows dependent controls even when their parent toggle is off; their descriptions say when they apply.
 
+### Browser settings and shareable URLs
+
+Open `index.html?settings` through a local web server or on the published site to show an on-page settings panel. Changes are applied immediately and written into the URL, so **Copy link** creates a shareable configuration. **Restore defaults** returns every control to its original value. The panel can be collapsed without interrupting the wallpaper.
+
+Individual query parameters also work without showing the panel. For example, `?orbitstyle=trail&motionspeed=150` selects fading orbit trails and 150% motion speed. Add `settings` anywhere in the query string to make the controls visible.
+
+### Publish with GitHub Pages or GitLab Pages
+
+The wallpaper is a static site and needs no server-side code or build step.
+
+- **GitHub Pages:** push the project to a repository, open **Settings → Pages**, choose **Deploy from a branch**, then select the repository's main branch and the root (`/`) folder. The site will be available at `https://USERNAME.github.io/REPOSITORY/` (or `https://USERNAME.github.io/` if the repository is named `USERNAME.github.io`).
+- **GitLab Pages:** push the project to a repository and add a Pages CI job that copies the project files into a `public` artifact. GitLab will publish the URL shown under **Deploy → Pages**.
+
+A separate account is not required. A normal GitHub or GitLab account is enough, and a project Pages site can live alongside other repositories. A dedicated account is useful only if you want a separate identity or the shortest GitHub root URL.
+
 | Setting | Default | Range or choices | What it does |
 | --- | --- | --- | --- |
 | **Background · color** | `#030405` | Any color | Changes the background color. |
