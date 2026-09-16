@@ -2,6 +2,7 @@
 
 An animated web wallpaper inspired by the solar system of *Outer Wilds*.
 
+[**Live Demo**](https://seeknhack.github.io/Outer-Wilds-Star-System-LIVE-Wallpaper/?settings)
 ## Highlights
 
 - Hover over the Quantum Moon to move it to another planet. It can also vanish into a sixth, empty location, shift automatically at a configurable interval, or move when the wallpaper host pauses the wallpaper.
