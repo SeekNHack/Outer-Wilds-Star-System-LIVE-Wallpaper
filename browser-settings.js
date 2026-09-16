@@ -1,26 +1,26 @@
 (function browserSettings() {
   const options = [
-    { key: 'stardensity', label: 'Densità stelle (%)', type: 'range', value: 200, min: 0, max: 300 },
-    { key: 'skycolor', label: 'Colore sfondo', type: 'color', value: '#030405' },
-    { key: 'coloredstars', label: 'Stelle colorate', type: 'checkbox', value: true },
-    { key: 'orbitstyle', label: 'Aspetto orbite', type: 'select', value: 'full', choices: [['full', 'Orbita completa'], ['trail', 'Scia'], ['hidden', 'Nascoste']] },
-    { key: 'pathopacity', label: 'Opacità orbite (%)', type: 'range', value: 36, min: 0, max: 100 },
-    { key: 'motionspeed', label: 'Velocità movimento (%)', type: 'range', value: 100, min: 25, max: 300 },
-    { key: 'fullsystemscale', label: 'Dimensione sistema (%)', type: 'range', value: 82, min: 50, max: 150 },
-    { key: 'clocksize', label: 'Dimensione orologio (px)', type: 'range', value: 42, min: 24, max: 100 },
-    { key: 'clocktop', label: 'Orologio · alto', type: 'text', value: '2.5%' },
-    { key: 'clockleft', label: 'Orologio · sinistra', type: 'text', value: '50%' },
-    { key: 'strangerenabled', label: 'Mostra lo Straniero', type: 'checkbox', value: true },
-    { key: 'strangershadowonly', label: 'Solo ombra dello Straniero', type: 'checkbox', value: false, dependsOn: 'strangerenabled' },
-    { key: 'strangerspeed', label: 'Velocità Straniero (%)', type: 'range', value: 50, min: 10, max: 200, dependsOn: 'strangerenabled' },
-    { key: 'quantumautoshift', label: 'Spostamento automatico Luna Quantica', type: 'checkbox', value: true },
-    { key: 'quantumshiftseconds', label: 'Secondi fra spostamenti', type: 'range', value: 30, min: 1, max: 120, dependsOn: 'quantumautoshift' },
+    { key: 'stardensity', label: 'Star density (%)', type: 'range', value: 200, min: 0, max: 300 },
+    { key: 'skycolor', label: 'Background color', type: 'color', value: '#030405' },
+    { key: 'coloredstars', label: 'Colored stars', type: 'checkbox', value: true },
+    { key: 'orbitstyle', label: 'Orbit appearance', type: 'select', value: 'full', choices: [['full', 'Full orbit'], ['trail', 'Fading trail'], ['hidden', 'Hidden']] },
+    { key: 'pathopacity', label: 'Orbit opacity (%)', type: 'range', value: 36, min: 0, max: 100 },
+    { key: 'motionspeed', label: 'Overall motion speed (%)', type: 'range', value: 100, min: 25, max: 300 },
+    { key: 'fullsystemscale', label: 'Entire star system size (%)', type: 'range', value: 82, min: 50, max: 150 },
+    { key: 'clocksize', label: 'Clock font size (px)', type: 'range', value: 42, min: 24, max: 100 },
+    { key: 'clocktop', label: 'Clock · top', type: 'text', value: '2.5%' },
+    { key: 'clockleft', label: 'Clock · left', type: 'text', value: '50%' },
+    { key: 'strangerenabled', label: 'Show The Stranger', type: 'checkbox', value: true },
+    { key: 'strangershadowonly', label: 'The Stranger · shadow only', type: 'checkbox', value: false, dependsOn: 'strangerenabled' },
+    { key: 'strangerspeed', label: 'The Stranger · speed (%)', type: 'range', value: 50, min: 10, max: 200, dependsOn: 'strangerenabled' },
+    { key: 'quantumautoshift', label: 'Quantum Moon · timed shifting', type: 'checkbox', value: true },
+    { key: 'quantumshiftseconds', label: 'Seconds between shifts', type: 'range', value: 30, min: 1, max: 120, dependsOn: 'quantumautoshift' },
     { key: 'loopenabled', label: 'Loop', type: 'checkbox', value: true },
-    { key: 'looptriggermode', label: 'Avvio supernova', type: 'select', value: 'timer', choices: [['timer', 'Dopo 22 minuti'], ['hour', 'Allo scoccare dell’ora']], dependsOn: 'loopenabled' },
-    { key: 'loopcountdown', label: 'Mostra conto alla rovescia', type: 'checkbox', value: true, dependsOn: 'loopenabled' },
-    { key: 'loopacceleration', label: 'Velocità loop (%)', type: 'range', value: 100, min: 100, max: 3000, dependsOn: 'loopenabled' },
-    { key: 'meteoritesenabled', label: 'Meteoriti di Hollow’s Lantern', type: 'checkbox', value: true, dependsOn: 'loopenabled' },
-    { key: 'giantslightningenabled', label: 'Fulmini rossi di Giant’s Deep', type: 'checkbox', value: true }
+    { key: 'looptriggermode', label: 'Supernova trigger', type: 'select', value: 'timer', choices: [['timer', 'After 22 minutes'], ['hour', 'At the exact hour']], dependsOn: 'loopenabled' },
+    { key: 'loopcountdown', label: 'Show countdown', type: 'checkbox', value: true, dependsOn: 'loopenabled' },
+    { key: 'loopacceleration', label: 'Loop speed (%)', type: 'range', value: 100, min: 100, max: 3000, dependsOn: 'loopenabled' },
+    { key: 'meteoritesenabled', label: "Hollow's Lantern meteorites", type: 'checkbox', value: true, dependsOn: 'loopenabled' },
+    { key: 'giantslightningenabled', label: "Giant's Deep red lightning", type: 'checkbox', value: true }
   ];
 
   const params = new URLSearchParams(window.location.search);
@@ -68,23 +68,23 @@
 
   const panel = document.createElement('aside');
   panel.className = 'browser-settings';
-  panel.setAttribute('aria-label', 'Impostazioni wallpaper');
+  panel.setAttribute('aria-label', 'Wallpaper settings');
   panel.innerHTML = `
     <div class="browser-settings__header">
-      <h1 class="browser-settings__title">Impostazioni</h1>
-      <button class="browser-settings__close" type="button" aria-label="Nascondi impostazioni">×</button>
+      <h1 class="browser-settings__title">Settings</h1>
+      <button class="browser-settings__close" type="button" aria-label="Hide settings">×</button>
     </div>
     <form class="browser-settings__form"></form>
     <div class="browser-settings__actions">
-      <button class="browser-settings__button browser-settings__reset" type="button">Ripristina</button>
-      <button class="browser-settings__button browser-settings__copy" type="button">Copia link</button>
+      <button class="browser-settings__button browser-settings__reset" type="button">Restore defaults</button>
+      <button class="browser-settings__button browser-settings__copy" type="button">Copy link</button>
     </div>`;
   document.body.append(panel);
 
   const reopen = document.createElement('button');
   reopen.className = 'browser-settings__reopen';
   reopen.type = 'button';
-  reopen.textContent = '⚙ Impostazioni';
+  reopen.textContent = '⚙ Settings';
   reopen.hidden = true;
   document.body.append(reopen);
 
@@ -185,10 +185,10 @@
     const button = event.currentTarget;
     try {
       await navigator.clipboard.writeText(window.location.href);
-      button.textContent = 'Link copiato';
+      button.textContent = 'Link copied';
     } catch (error) {
-      window.prompt('Copia questo link:', window.location.href);
+      window.prompt('Copy this link:', window.location.href);
     }
-    setTimeout(() => { button.textContent = 'Copia link'; }, 1600);
+    setTimeout(() => { button.textContent = 'Copy link'; }, 1600);
   });
 })();
