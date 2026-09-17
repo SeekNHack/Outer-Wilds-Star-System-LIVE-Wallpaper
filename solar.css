@@ -244,17 +244,14 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   left: calc(50% + var(--stranger-x));
   width: calc(var(--system-size) * .15);
   aspect-ratio: 1;
-  /* Scale the complete Stranger visual as one unit. The parent position
-     stays in orbit space, while PNG, shadow and their feathering scale
-     together. */
-  transform: translate(-50%, -50%) scale(var(--stranger-size, 1));
+  transform: translate(-50%, -50%);
 }
 .stranger-shadow {
   position: absolute;
   z-index: 4;
   top: 50%;
   left: 50%;
-  width: 100%;
+  width: calc(100% * var(--stranger-size, 1));
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   pointer-events: none;
@@ -270,7 +267,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   z-index: 5;
   top: 50%;
   left: 50%;
-  width: 70%;
+  width: calc(70% * var(--stranger-size, 1));
   height: auto;
   aspect-ratio: 954 / 882;
   transform: translate(-50%, -50%);
