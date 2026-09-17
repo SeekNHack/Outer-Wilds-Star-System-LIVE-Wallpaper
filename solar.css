@@ -244,14 +244,15 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   left: calc(50% + var(--stranger-x));
   width: calc(var(--system-size) * .15);
   aspect-ratio: 1;
-  transform: translate(-50%, -50%);
+  /* Resize the whole visual group without changing its orbital position. */
+  transform: translate(-50%, -50%) scale(var(--stranger-size, 1));
 }
 .stranger-shadow {
   position: absolute;
   z-index: 4;
   top: 50%;
   left: 50%;
-  width: calc(100% * var(--stranger-size, 1));
+  width: 100%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   pointer-events: none;
@@ -267,7 +268,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   z-index: 5;
   top: 50%;
   left: 50%;
-  width: calc(70% * var(--stranger-size, 1));
+  width: 70%;
   height: auto;
   aspect-ratio: 954 / 882;
   transform: translate(-50%, -50%);
