@@ -242,7 +242,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   position: absolute;
   top: calc(50% + var(--stranger-y));
   left: calc(50% + var(--stranger-x));
-  width: calc(var(--system-size) * .15);
+  width: calc(var(--system-size) * .15 * var(--stranger-size, 1));
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
 }

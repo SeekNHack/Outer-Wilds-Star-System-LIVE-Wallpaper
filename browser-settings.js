@@ -13,6 +13,7 @@
     { key: 'strangerenabled', label: 'Show The Stranger', type: 'checkbox', value: true },
     { key: 'strangershadowonly', label: 'The Stranger · shadow only', type: 'checkbox', value: false, dependsOn: 'strangerenabled' },
     { key: 'strangerspeed', label: 'The Stranger · speed (%)', type: 'range', value: 50, min: 10, max: 200, dependsOn: 'strangerenabled' },
+    { key: 'strangersize', label: 'The Stranger · size (including shadow) (%)', type: 'range', value: 100, min: 50, max: 200, dependsOn: 'strangerenabled' },
     { key: 'quantumautoshift', label: 'Quantum Moon · timed shifting', type: 'checkbox', value: true },
     { key: 'quantumshiftseconds', label: 'Seconds between shifts', type: 'range', value: 30, min: 1, max: 120, dependsOn: 'quantumautoshift' },
     { key: 'loopenabled', label: 'Loop', type: 'checkbox', value: true },

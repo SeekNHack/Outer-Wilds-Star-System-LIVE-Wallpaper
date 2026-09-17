@@ -3,7 +3,7 @@
 const livelyPropertyNames = new Set([
   'stardensity', 'skycolor', 'coloredstars', 'orbitstyle', 'pathopacity',
   'motionspeed', 'fullsystemscale', 'clocksize', 'clocktop', 'clockleft',
-  'strangerenabled', 'strangershadowonly', 'strangerspeed',
+  'strangerenabled', 'strangershadowonly', 'strangerspeed', 'strangersize',
   'quantumautoshift', 'quantumshiftseconds', 'loopenabled', 'looptriggermode', 'loopcountdown',
   'loopacceleration', 'meteoritesenabled', 'giantslightningenabled'
 ]);

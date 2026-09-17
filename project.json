@@ -115,14 +115,24 @@
         "max": 200,
         "editable": true
       },
-      "quantumautoshift": {
+      "strangersize": {
         "order": 13,
+        "condition": "strangerenabled.value == true",
+        "text": "The Stranger · size (including shadow) (%)",
+        "type": "slider",
+        "value": 100,
+        "min": 50,
+        "max": 200,
+        "editable": true
+      },
+      "quantumautoshift": {
+        "order": 14,
         "text": "Quantum Moon · timed shifting",
         "type": "bool",
         "value": true
       },
       "quantumshiftseconds": {
-        "order": 14,
+        "order": 15,
         "condition": "quantumautoshift.value == true",
         "text": "Quantum Moon · seconds between shifts",
         "type": "slider",
@@ -132,13 +142,13 @@
         "editable": true
       },
       "loopenabled": {
-        "order": 15,
+        "order": 16,
         "text": "Loop",
         "type": "bool",
         "value": true
       },
       "looptriggermode": {
-        "order": 16,
+        "order": 17,
         "condition": "loopenabled.value == true",
         "text": "Loop · supernova trigger",
         "type": "combo",
@@ -155,14 +165,14 @@
         ]
       },
       "loopcountdown": {
-        "order": 17,
+        "order": 18,
         "condition": "loopenabled.value == true",
         "text": "Loop · show countdown",
         "type": "bool",
         "value": true
       },
       "loopacceleration": {
-        "order": 18,
+        "order": 19,
         "condition": "loopenabled.value == true",
         "text": "Loop · speed (%)",
         "type": "slider",
@@ -172,14 +182,14 @@
         "editable": true
       },
       "meteoritesenabled": {
-        "order": 19,
+        "order": 20,
         "condition": "loopenabled.value == true",
         "text": "Loop · Hollow's Lantern meteorites",
         "type": "bool",
         "value": true
       },
       "giantslightningenabled": {
-        "order": 20,
+        "order": 21,
         "text": "Giant's Deep · red lightning",
         "type": "bool",
         "value": true

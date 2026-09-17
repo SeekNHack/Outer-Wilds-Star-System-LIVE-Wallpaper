@@ -85,6 +85,15 @@
     "step": 1,
     "help": "Used only while The Stranger is shown."
   },
+  "strangersize": {
+    "text": "The Stranger · size (including shadow) (%)",
+    "type": "slider",
+    "value": 100,
+    "min": 50,
+    "max": 200,
+    "step": 1,
+    "help": "Scales The Stranger and its shadow together. Used only while The Stranger is shown."
+  },
   "quantumautoshift": {
     "text": "Quantum Moon · timed shifting",
     "type": "checkbox",

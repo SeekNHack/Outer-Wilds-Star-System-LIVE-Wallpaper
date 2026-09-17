@@ -95,6 +95,8 @@ window.wallpaperPropertyListener = {
         window.dispatchEvent(new CustomEvent('wallpaper-speed-changed', { detail: value / 100 }));
       } else if (key === 'strangerspeed' && value > 0) {
         window.dispatchEvent(new CustomEvent('wallpaper-stranger-speed-changed', { detail: value / 100 }));
+      } else if (key === 'strangersize' && value > 0) {
+        document.documentElement.style.setProperty('--stranger-size', String(value / 100));
       } else if (key === 'fullsystemscale') {
         document.documentElement.style.setProperty('--system-scale', String(value / 100));
       } else if (key === 'clocksize') {

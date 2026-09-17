@@ -47,6 +47,7 @@ A separate account is not required. A normal GitHub or GitLab account is enough,
 | **The Stranger · show** | On | On / off | Shows The Stranger and its eclipse. Off hides both the image and shadow. |
 | **The Stranger · shadow only** | Off | On / off | Hides The Stranger's PNG while keeping its moving shadow and eclipse. Available when **The Stranger · show** is on. |
 | **The Stranger · speed (%)** | `50%` | `10–200%` | Sets The Stranger's speed relative to the overall speed. At `100%` overall speed, `50%` makes one orbit take about 120 seconds instead of 60. This setting appears only when The Stranger is shown. |
+| **The Stranger · size (including shadow) (%)** | `100%` | `50–200%` | Scales The Stranger and its shadow together. This setting appears only when The Stranger is shown. |
 | **Quantum Moon · timed shifting** | On | On / off | Enables or disables only the Moon's periodic shifts. |
 | **Quantum Moon · seconds between shifts** | `30s` | `1–120s` | Sets the interval between periodic shifts. This setting appears only when timed shifting is on. |
 | **Loop** | On | On / off | Recreates a timed stellar collapse and supernova sequence. Off keeps the wallpaper's continuous animation. |
