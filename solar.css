@@ -254,7 +254,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   z-index: 4;
   top: 50%;
   left: 50%;
-  width: 100%;
+  width: 70%;
   aspect-ratio: 1;
   transform: translate(-50%, -50%);
   pointer-events: none;
