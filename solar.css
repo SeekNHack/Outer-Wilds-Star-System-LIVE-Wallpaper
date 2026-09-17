@@ -242,9 +242,12 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   position: absolute;
   top: calc(50% + var(--stranger-y));
   left: calc(50% + var(--stranger-x));
-  width: calc(var(--system-size) * .15 * var(--stranger-size, 1));
+  width: calc(var(--system-size) * .15);
   aspect-ratio: 1;
-  transform: translate(-50%, -50%);
+  /* Scale the complete Stranger visual as one unit. The parent position
+     stays in orbit space, while PNG, shadow and their feathering scale
+     together. */
+  transform: translate(-50%, -50%) scale(var(--stranger-size, 1));
 }
 .stranger-shadow {
   position: absolute;
