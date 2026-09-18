@@ -180,13 +180,13 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   isolation: isolate;
   transform: translate(-50%, -50%) scale(calc(var(--object-scale, 1) * var(--loop-sun-scale, 1)));
   -webkit-mask-image: radial-gradient(
-    circle calc(var(--system-size) * .0768 * var(--loop-sun-inverse-scale, 1)) at
+    circle calc(var(--system-size) * .0768 * var(--stranger-size, 1) * var(--loop-sun-inverse-scale, 1)) at
     calc(50% + var(--stranger-x) * var(--loop-sun-inverse-scale, 1))
     calc(50% + var(--stranger-y) * var(--loop-sun-inverse-scale, 1)),
     rgba(255, 255, 255, var(--loop-sun-mask-alpha, 0)) 0%,
     rgba(255, 255, 255, var(--loop-sun-mask-alpha, 0)) 75%, #fff 100%);
   mask-image: radial-gradient(
-    circle calc(var(--system-size) * .0768 * var(--loop-sun-inverse-scale, 1)) at
+    circle calc(var(--system-size) * .0768 * var(--stranger-size, 1) * var(--loop-sun-inverse-scale, 1)) at
     calc(50% + var(--stranger-x) * var(--loop-sun-inverse-scale, 1))
     calc(50% + var(--stranger-y) * var(--loop-sun-inverse-scale, 1)),
     rgba(255, 255, 255, var(--loop-sun-mask-alpha, 0)) 0%,
