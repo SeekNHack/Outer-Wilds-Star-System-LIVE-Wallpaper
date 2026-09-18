@@ -127,8 +127,29 @@
     const quantumHosts = [
       '.traveller--twins', '.traveller--timber', '.traveller--brittle',
       '.traveller--giants', '.traveller--bramble', null
-    ].map(selector => document.querySelector(selector));
+    ].map(selector => selector && document.querySelector(selector));
     let currentQuantumHost = Math.floor(Math.random() * quantumHosts.length);
+    const quantumMoon = quantumOrbit.querySelector('.quantum-moon');
+
+    function rectanglesOverlap(first, second, padding = 2) {
+      return first.left < second.right + padding &&
+        first.right > second.left - padding &&
+        first.top < second.bottom + padding &&
+        first.bottom > second.top - padding;
+    }
+
+    function quantumPlacementIsClear() {
+      const quantumBounds = quantumMoon.getBoundingClientRect();
+      return [...document.querySelectorAll('.moon:not(.quantum-moon), .probe-shot')]
+        .every(other => !rectanglesOverlap(quantumBounds, other.getBoundingClientRect()));
+    }
+
+    function setQuantumPhase(phase) {
+      const animation = quantumOrbit.getAnimations()
+        .find(candidate => candidate.animationName === 'moon-orbit');
+      if (animation) animation.currentTime = phase;
+    }
+
     function placeQuantumMoon() {
       const host = quantumHosts[currentQuantumHost];
       quantumOrbit.classList.toggle('quantum-orbit--absent', !host);
@@ -136,15 +157,41 @@
     }
     placeQuantumMoon();
     const quantumPeriod = parseFloat(getComputedStyle(quantumOrbit).getPropertyValue('--period'));
-    quantumOrbit.style.animationDelay = `${-Math.random() * quantumPeriod}s`;
+    const quantumPhaseSamples = 96;
+    setQuantumPhase(Math.random() * quantumPeriod * 1000);
+
+    function moveQuantumToClearPhase() {
+      if (!quantumHosts[currentQuantumHost]) return;
+      for (let sample = 0; sample < quantumPhaseSamples; sample++) {
+        setQuantumPhase(sample / quantumPhaseSamples * quantumPeriod * 1000);
+        if (quantumPlacementIsClear()) return;
+      }
+    }
+    moveQuantumToClearPhase();
     let quantumTransitioning = false;
     let quantumShiftTimeout;
     let quantumTransitionId = 0;
 
     function selectNextQuantumHost() {
-      // Pick any other destination, including the empty sixth location.
       const nextOffset = 1 + Math.floor(Math.random() * (quantumHosts.length - 1));
-      currentQuantumHost = (currentQuantumHost + nextOffset) % quantumHosts.length;
+      const start = (currentQuantumHost + nextOffset) % quantumHosts.length;
+      const candidateIndexes = quantumHosts.map((_, index) => index)
+        .filter(index => index !== currentQuantumHost)
+        .sort(() => Math.random() - .5);
+      for (const index of candidateIndexes) {
+        currentQuantumHost = index;
+        placeQuantumMoon();
+        for (let sample = 0; sample < quantumPhaseSamples; sample++) {
+          const phase = ((start + sample) % quantumPhaseSamples) /
+            quantumPhaseSamples * quantumPeriod * 1000;
+          setQuantumPhase(phase);
+          if (!quantumHosts[index] || quantumPlacementIsClear()) return;
+        }
+      }
+
+      // The empty location is always a safe fallback if every visible host
+      // is temporarily intersecting at all sampled phases.
+      currentQuantumHost = quantumHosts.length - 1;
       placeQuantumMoon();
     }
 
