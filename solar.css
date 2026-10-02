@@ -57,6 +57,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 .loop-finale .interloper-orbit,
 .loop-finale .interloper:not(.interloper--swallowed),
 .loop-finale .interloper-beam,
+.loop-finale .interloper-solar-tail,
 .loop-finale .white-hole { opacity: var(--loop-world-opacity, 1); }
 .loop-finale .stranger-wrap { opacity: var(--loop-stranger-opacity, 1); }
 .loop-finale .meteorite-layer { opacity: var(--loop-world-opacity, 1); }
@@ -506,7 +507,7 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 .interloper-beam {
   position: absolute; z-index: 1;
   left: 0; top: 0;
-  width: clamp(65px, 10vmin, 135px); height: clamp(10px, 2vmin, 24px);
+  width: clamp(65px, 10vmin, 135px); height: clamp(8px, 1.7vmin, 20px);
   transform: translate3d(-100px, -100px, 0);
   transform-origin: 0 50%;
   clip-path: polygon(0 0, 0 100%, 100% 50%);
@@ -544,6 +545,26 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
   mix-blend-mode: screen;
   animation: interloper-beam-particles .42s linear infinite;
 }
+.interloper-solar-tail {
+  position: absolute; z-index: 1; inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  transition: opacity .5s ease;
+  overflow: visible;
+  pointer-events: none;
+}
+.interloper-solar-tail path {
+  fill: none;
+  stroke: url(#interloper-solar-gradient);
+  stroke-linecap: round;
+}
+.interloper-beam__solar-tail {
+  stroke-width: 14px;
+  filter: drop-shadow(0 0 8px rgba(20, 78, 255, .46)) drop-shadow(0 0 16px rgba(20, 78, 255, .24));
+  animation: interloper-solar-tail-pulse 1.8s ease-in-out infinite alternate;
+}
+.loop-active .interloper-solar-tail { transition: opacity .5s ease; }
+.interloper-solar-tail--ready { opacity: .62; }
 .loop-active .interloper { transition: opacity .5s ease; }
 .loop-active .interloper-beam { transition: opacity .5s ease; }
 .interloper--ready { opacity: 1; }
@@ -666,6 +687,10 @@ img { display: block; user-select: none; -webkit-user-drag: none; }
 @keyframes interloper-beam-flow {
   from { background-position: 0 0, 0 0; }
   to { background-position: 0 0, 80px 0; }
+}
+@keyframes interloper-solar-tail-pulse {
+  from { opacity: .7; filter: drop-shadow(0 0 6px rgba(20, 78, 255, .38)) drop-shadow(0 0 12px rgba(20, 78, 255, .18)); }
+  to { opacity: .92; filter: drop-shadow(0 0 10px rgba(20, 78, 255, .56)) drop-shadow(0 0 20px rgba(20, 78, 255, .3)); }
 }
 @keyframes interloper-beam-flicker {
   from { opacity: .35; transform: scaleY(.82); }

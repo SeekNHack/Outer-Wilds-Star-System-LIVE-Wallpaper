@@ -98,6 +98,16 @@
       </div>
 
       <div class="interloper-orbit"></div>
+      <svg id="interloper-solar-tail" class="interloper-solar-tail" aria-hidden="true">
+        <defs>
+          <linearGradient id="interloper-solar-gradient" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#236dff" stop-opacity=".72"></stop>
+            <stop offset=".55" stop-color="#175cff" stop-opacity=".43"></stop>
+            <stop offset="1" stop-color="#175cff" stop-opacity="0"></stop>
+          </linearGradient>
+        </defs>
+        <path class="interloper-beam__solar-tail"></path>
+      </svg>
       <span id="interloper-beam" class="interloper-beam" aria-hidden="true"></span>
       <img id="interloper" class="interloper" src="./assets/interloper.png" alt="" draggable="false">
       <img class="white-hole" src="./assets/White_Hole.png" alt="" draggable="false">
@@ -281,6 +291,7 @@
     }
 
     const interloperBeam = document.getElementById('interloper-beam');
+    const interloperSolarTail = document.getElementById('interloper-solar-tail');
     const strangerOrbits = [[.62, .98], [.72, 1.08], [.84, 1.18]];
     function chooseStrangerOrbit() {
       const [radiusX, radiusY] = strangerOrbits[Math.floor(Math.random() * strangerOrbits.length)];
@@ -477,6 +488,7 @@
       interloper.classList.remove('interloper--swallowed');
       interloperOrbit.classList.remove('interloper-orbit--swallowed');
       interloperBeam.style.opacity = '';
+      interloperSolarTail.style.opacity = '';
       cometProgress = cometStartProgress;
       previousFrameTime = null;
       document.querySelectorAll('.solar-system, .traveller, .binary-system, .moon-orbit, .quantum-orbit, .sun-station-orbit, .sun__image, .planet--timber, .planet--brittle, .planet--giants, .planet--bramble')
@@ -519,6 +531,22 @@
       const angle = angleAtDistance(distance);
       const x = cometPath.centerX + cometPath.radiusX * Math.cos(angle);
       const y = cometPath.centerY + cometPath.radiusY * Math.sin(angle);
+      // The comet points toward the Sun; its blue tail extends from its rear,
+      // directly away from the Sun at every point in the orbit.
+      const tailX = x - sunCenterX;
+      const tailY = y - sunCenterY;
+      const tailDirectionLength = Math.hypot(tailX, tailY) || 1;
+      const solarTailLength = Math.min(cometPath.length * .13, 130);
+      const tailEndX = x + tailX / tailDirectionLength * solarTailLength;
+      const tailEndY = y + tailY / tailDirectionLength * solarTailLength;
+      interloperSolarTail.querySelector('.interloper-beam__solar-tail')
+        .setAttribute('d', `M ${x.toFixed(2)} ${y.toFixed(2)} L ${tailEndX.toFixed(2)} ${tailEndY.toFixed(2)}`);
+      const solarGradient = document.getElementById('interloper-solar-gradient');
+      solarGradient.setAttribute('x1', x); solarGradient.setAttribute('y1', y);
+      solarGradient.setAttribute('x2', tailEndX); solarGradient.setAttribute('y2', tailEndY);
+      // Offset the cyan cone 25 degrees counterclockwise from the blue solar tail.
+      const solarTailAngle = Math.atan2(tailY, tailX) * 180 / Math.PI;
+      const orbitTailAngle = solarTailAngle - 25;
       // A conic gradient uses the visible polar angle, which differs from
       // the ellipse parameter when the horizontal and vertical radii differ.
       const trailAngle = Math.atan2(y - cometPath.centerY, x - cometPath.centerX);
@@ -534,12 +562,13 @@
       ) * 180 / Math.PI;
       const visualAngle = targetAngle + 180;
       interloper.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) rotate(${visualAngle}deg) scale(var(--object-scale, 1))`;
-      interloperBeam.style.transform = `translate3d(${x}px, ${y}px, 0) translate(0, -50%) rotate(${visualAngle}deg)`;
+      interloperBeam.style.transform = `translate3d(${x}px, ${y}px, 0) translate(0, -50%) rotate(${orbitTailAngle}deg)`;
       if (!cometInitiallyPlaced) {
         cometInitiallyPlaced = true;
         requestAnimationFrame(() => {
           interloper.classList.add('interloper--ready');
           interloperBeam.classList.add('interloper-beam--ready');
+          interloperSolarTail.classList.add('interloper-solar-tail--ready');
         });
       }
       // Use the same local-space contact geometry as the phase calibration.
@@ -554,6 +583,7 @@
         interloper.classList.add('interloper--swallowed');
         interloperOrbit.classList.add('interloper-orbit--swallowed');
         interloperBeam.style.opacity = '0';
+        interloperSolarTail.style.opacity = '0';
       }
 
       requestAnimationFrame(animateInterloper);
